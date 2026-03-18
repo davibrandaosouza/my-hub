@@ -46,19 +46,48 @@ MyHub nasceu com dois objetivos:
 
 ## Módulos
 
-| Módulo            | Descrição                                           | Status       |
-| ----------------- | --------------------------------------------------- | ------------ |
-| **Autenticação**  | Login, cadastro, OAuth Google, recuperação de senha | ✅ Concluído |
-| **Dashboard**     | Visão geral do dia, widgets de resumo, quote diária | 🔲 Em breve  |
-| **Devocionais**   | Registro diário, versículo, reflexão, streak        | 🔲 Em breve  |
-| **Planejamentos** | Kanban board, metas, projetos com prioridades       | 🔲 Em breve  |
-| **Anotações**     | Editor markdown, tags, busca, auto-save             | 🔲 Em breve  |
-| **Calendário**    | Datas importantes, eventos recorrentes              | 🔲 Em breve  |
-| **Rotinas**       | Hábitos diários, checklist por período, heatmap     | 🔲 Em breve  |
-| **Pomodoro**      | Timer, fila de tarefas, estatísticas de foco        | 🔲 Em breve  |
-| **Animes**        | Lista de animes, status, integração AniList API     | 🔲 Em breve  |
-| **Jogos**         | Lista de jogos, status, integração IGDB API         | 🔲 Em breve  |
-| **Guitarra**      | Acordes, progressões, Web Audio API                 | 🔲 Em breve  |
+| Módulo            | Descrição                                           | Status        |
+| ----------------- | --------------------------------------------------- | ------------- |
+| **Autenticação**  | Login, cadastro, OAuth Google, recuperação de senha | ✅ Concluído  |
+| **Dashboard**     | Visão geral do dia, stats, acesso rápido, eventos   | ✅ Concluído  |
+| **Devocionais**   | Registro diário, versículo, reflexão, streak        | 🔲 Em breve   |
+| **Planejamentos** | Kanban board, metas, projetos com prioridades       | 🔲 Em breve   |
+| **Anotações**     | Editor markdown, tags, busca, auto-save             | 🔲 Em breve   |
+| **Rotinas**       | Hábitos diários, checklist por período, heatmap     | 🔲 Em breve   |
+| **Pomodoro**      | Timer, fila de tarefas, estatísticas de foco        | 🔲 Em breve   |
+| **Guitarra**      | Acordes, progressões, Web Audio API                 | 🔲 Em breve   |
+| **UFES**          | Disciplinas, provas, grade e acompanhamento         | 🔲 Em breve   |
+| **Programação**   | Estudos, projetos, recursos e progresso             | 🔲 Em breve   |
+| **Animes**        | Lista de animes, status, integração AniList API     | 🔲 Em breve   |
+| **Filmes**        | Lista de filmes, status, avaliações                 | 🔲 Em breve   |
+| **Séries**        | Lista de séries, episódios assistidos               | 🔲 Em breve   |
+| **Jogos**         | Lista de jogos, status, integração IGDB API         | 🔲 Em breve   |
+
+---
+
+## Layout e Interface
+
+### Sidebar
+
+Navegação lateral colapsável com grupos organizados por categoria:
+
+- **Visão Geral** — Dashboard
+- **Espiritual** — Devocionais
+- **Produtividade** — Planejamentos, Anotações, Pomodoro, Rotinas
+- **Estudos** — Guitarra, UFES, Programação
+- **Entretenimento** — Animes, Filmes, Séries, Jogos
+- **Rodapé** — Configurações e logout
+
+Suporta colapso total (ícones apenas) com tooltip de navegação.
+
+### Header
+
+Header fixo no topo de cada página com:
+
+- Título da página atual
+- Data formatada em português
+- Botão de Ações Rápidas
+- Fundo com `backdrop-blur` integrado ao tema escuro
 
 ---
 
@@ -121,29 +150,42 @@ Regras de segurança configuradas diretamente no banco garantem que cada usuári
 - [x] Setup do projeto
 - [x] Autenticação completa (email + Google)
 - [x] Cookie HttpOnly seguro
-- [x] Proteção de rotas
+- [x] Proteção de rotas via middleware
 
-### Fase 2 — Core Modules 🔄
+### Fase 2 — Shell da Aplicação ✅
 
-- [ ] Dashboard com widgets
+- [x] Layout base com Sidebar colapsável
+- [x] Header fixo com blur e data formatada
+- [x] Grupos de navegação: Visão Geral, Espiritual, Produtividade, Estudos, Entretenimento
+- [x] Dashboard com stats, acesso rápido, eventos e notas recentes
+- [x] Scrollbar personalizada integrada ao tema
+
+### Fase 3 — Core Modules 🔄
+
 - [ ] Módulo de Anotações
 - [ ] Módulo de Pomodoro
 - [ ] Módulo de Rotinas
-
-### Fase 3 — Conteúdo Pessoal
-
 - [ ] Módulo de Devocionais
+
+### Fase 4 — Estudos
+
+- [ ] Módulo UFES (disciplinas e grade)
+- [ ] Módulo de Programação
+- [ ] Módulo de Guitarra (Web Audio API)
+
+### Fase 5 — Planejamento
+
 - [ ] Módulo de Planejamentos (Kanban)
 - [ ] Módulo de Calendário
 
-### Fase 4 — Entretenimento
+### Fase 6 — Entretenimento
 
 - [ ] Módulo de Animes (AniList API)
+- [ ] Módulo de Filmes e Séries
 - [ ] Módulo de Jogos (IGDB API)
 
-### Fase 5 — Avançado
+### Fase 7 — Avançado
 
-- [ ] Módulo de Guitarra (Web Audio API)
 - [ ] Testes automatizados
 - [ ] PWA (Progressive Web App)
 - [ ] Notificações push

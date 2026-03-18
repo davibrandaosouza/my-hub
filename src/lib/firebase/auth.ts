@@ -7,6 +7,7 @@ import {
     sendPasswordResetEmail,
     onAuthStateChanged,
     type User,
+    updateProfile
 } from "firebase/auth"
 import { auth } from "./config"
 
@@ -50,10 +51,12 @@ export async function loginWithEmail(
 
 export async function registerWithEmail(
     email: string,
-    password: string
+    password: string,
+    name: string
 ): Promise<AuthResult> {
     try {
         const credential = await createUserWithEmailAndPassword(auth, email, password)
+        await updateProfile(credential.user, { displayName: name })
         return { user: credential.user, error: null }
     } catch (error) {
         return { user: null, error: getAuthErrorMessage(error) }

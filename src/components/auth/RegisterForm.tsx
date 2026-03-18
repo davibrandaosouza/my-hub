@@ -4,16 +4,15 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react"
+import { Eye, EyeOff, UserPlus, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-import { loginSchema } from "@/lib/validations/auth"
-import { loginWithEmail, loginWithGoogle } from "@/lib/firebase/auth"
+import { registerSchema } from "@/lib/validations/auth"
+import { registerWithEmail, loginWithGoogle } from "@/lib/firebase/auth"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 
-type LoginFormData = z.infer<typeof loginSchema>
+type RegisterFormData = z.infer<typeof registerSchema>
 
 async function setSessionCookie(token: string) {
     await fetch("/api/auth/session", {
@@ -23,9 +22,10 @@ async function setSessionCookie(token: string) {
     })
 }
 
-export function LoginForm() {
+export function RegisterForm() {
     const router = useRouter()
     const [showPassword, setShowPassword] = useState(false)
+    const [showConfirm, setShowConfirm] = useState(false)
     const [firebaseError, setFirebaseError] = useState<string | null>(null)
     const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
@@ -33,19 +33,15 @@ export function LoginForm() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<LoginFormData>({
-        resolver: zodResolver(loginSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-            rememberMe: false,
-        },
+    } = useForm<RegisterFormData>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
     })
 
-    const onSubmit = async (data: LoginFormData) => {
+    const onSubmit = async (data: RegisterFormData) => {
         setFirebaseError(null)
 
-        const { user, error } = await loginWithEmail(data.email, data.password)
+        const { user, error } = await registerWithEmail(data.email, data.password, data.name)
 
         if (error) {
             setFirebaseError(error)
@@ -54,7 +50,7 @@ export function LoginForm() {
 
         if (user) {
             const token = await user.getIdToken()
-            setSessionCookie(token)
+            await setSessionCookie(token)
             router.push("/dashboard")
         }
     }
@@ -112,8 +108,24 @@ export function LoginForm() {
                 <div className="flex-1 h-px bg-border" />
             </div>
 
-            {/* FORMULÁRIO EMAIL/SENHA */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+                {/* NOME */}
+                <div className="space-y-2">
+                    <label htmlFor="name" className="text-sm font-medium text-white">
+                        Nome
+                    </label>
+                    <Input
+                        id="name"
+                        type="text"
+                        placeholder="Seu nome"
+                        disabled={isLoading}
+                        {...register("name")}
+                    />
+                    {errors.name && (
+                        <p className="text-xs text-red-500">{errors.name.message}</p>
+                    )}
+                </div>
 
                 {/* EMAIL */}
                 <div className="space-y-2">
@@ -151,9 +163,7 @@ export function LoginForm() {
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
                         >
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            <span className="sr-only">
-                                {showPassword ? "Ocultar senha" : "Mostrar senha"}
-                            </span>
+                            <span className="sr-only">{showPassword ? "Ocultar senha" : "Mostrar senha"}</span>
                         </button>
                     </div>
                     {errors.password && (
@@ -161,55 +171,61 @@ export function LoginForm() {
                     )}
                 </div>
 
-                {/* LEMBRAR + ESQUECEU */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            id="rememberMe"
+                {/* CONFIRMAR SENHA */}
+                <div className="space-y-2">
+                    <label htmlFor="confirmPassword" className="text-sm font-medium text-white">
+                        Confirmar senha
+                    </label>
+                    <div className="relative">
+                        <Input
+                            id="confirmPassword"
+                            type={showConfirm ? "text" : "password"}
+                            placeholder="••••••••"
                             disabled={isLoading}
-                            {...register("rememberMe")}
+                            {...register("confirmPassword")}
                         />
-                        <label
-                            htmlFor="rememberMe"
-                            className="text-sm font-medium text-muted cursor-pointer"
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirm(!showConfirm)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
                         >
-                            Lembrar de mim
-                        </label>
+                            {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            <span className="sr-only">{showConfirm ? "Ocultar senha" : "Mostrar senha"}</span>
+                        </button>
                     </div>
-                    <a href="/reset-password" className="text-sm text-primary hover:text-primary-hover transition-colors">
-                        Esqueceu a senha?
-                    </a>
+                    {errors.confirmPassword && (
+                        <p className="text-xs text-red-500">{errors.confirmPassword.message}</p>
+                    )}
                 </div>
 
-                {/* ERRO DO FIREBASE */}
+                {/* ERRO FIREBASE */}
                 {firebaseError && (
                     <div className="rounded-md bg-red-500/10 border border-red-500/20 px-4 py-3">
                         <p className="text-sm text-red-400">{firebaseError}</p>
                     </div>
                 )}
 
-                {/* BOTÃO ENTRAR */}
+                {/* BOTÃO */}
                 <Button type="submit" className="w-full mt-2" disabled={isLoading}>
                     {isSubmitting ? (
                         <>
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Entrando...
+                            Criando conta...
                         </>
                     ) : (
                         <>
-                            <LogIn className="w-4 h-4 mr-2" />
-                            Entrar
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Criar conta
                         </>
                     )}
                 </Button>
 
             </form>
 
-            {/* CRIAR CONTA */}
             <p className="text-center text-sm text-muted">
-                Não tem uma conta?{" "}
-                <a href="/register" className="text-primary hover:text-primary-hover transition-colors">
-                    Criar conta
+                Já tem uma conta?{" "}
+                <a href="/login" className="text-primary hover:text-primary-hover transition-colors">
+                    Entrar
                 </a>
             </p>
 

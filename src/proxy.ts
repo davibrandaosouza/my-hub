@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const PUBLIC_ROUTES = ["/login", "/register", "/reset-password"]
+const PUBLIC_ROUTES = ["/login", "/register", "/reset-password", "/auth/action"]
 const DEFAULT_AUTHENTICATED_ROUTE = "/dashboard"
 const DEFAULT_UNAUTHENTICATED_ROUTE = "/login"
 
