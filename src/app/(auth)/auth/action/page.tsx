@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { ResetPasswordAction } from "@/components/auth/ResetPasswordAction"
 
 export default function AuthActionPage() {
@@ -12,7 +13,13 @@ export default function AuthActionPage() {
                     Redefinição de senha
                 </p>
                 <div className="w-full rounded-2xl border border-border bg-card-background p-8 shadow-xl">
-                    <ResetPasswordAction />
+                    <Suspense fallback={
+                        <div className="flex items-center justify-center py-8">
+                            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        </div>
+                    }>
+                        <ResetPasswordAction />
+                    </Suspense>
                 </div>
             </div>
         </div>
