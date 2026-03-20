@@ -6,6 +6,7 @@ import { Modal } from "@/components/ui/modal"
 import { saveDevocional } from "@/lib/firebase/devocionais"
 import { useAuth } from "@/hooks/useAuth"
 import type { Devocional } from "@/types/devocional"
+import { useToastContext } from "@/app/(hub)/layout"
 
 type Props = {
     devocionais: Devocional[]
@@ -19,11 +20,13 @@ export function DevocionalHistorico({ devocionais, onUpdated }: Props) {
     const [editing, setEditing] = useState(false)
     const [editedReflection, setEditedReflection] = useState("")
     const [saving, setSaving] = useState(false)
+    const toast = useToastContext()
 
     const filtered = devocionais.filter(d =>
         d.reading.toLowerCase().includes(search.toLowerCase()) ||
         d.reflection.toLowerCase().includes(search.toLowerCase())
     )
+
 
     const formatDate = (dateStr: string) => {
         const [year, month, day] = dateStr.split("-")
@@ -73,11 +76,13 @@ export function DevocionalHistorico({ devocionais, onUpdated }: Props) {
             selected.completed,
         )
 
-        if (!error) {
-            // Atualiza o objeto local para refletir na UI sem recarregar
+        if (error) {
+            toast.error("Erro ao salvar reflexão. Tente novamente.")
+        } else {
             setSelected({ ...selected, reflection: editedReflection })
             setEditing(false)
             onUpdated()
+            toast.success("Reflexão atualizada!")
         }
 
         setSaving(false)

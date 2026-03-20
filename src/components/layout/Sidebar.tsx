@@ -12,6 +12,8 @@ import {
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { logout } from "@/lib/firebase/auth"
+import { Modal } from "@/components/ui/modal"
+import { useToastContext } from "@/app/(hub)/layout"
 
 // ── TIPOS ──────────────────────────────────────────
 type NavItem = {
@@ -73,6 +75,8 @@ export function Sidebar() {
     const router = useRouter()
     const [collapsed, setCollapsed] = useState(false)
     const [closedGroups, setClosedGroups] = useState<string[]>([])
+    const [showLogoutModal, setShowLogoutModal] = useState(false)
+    const toast = useToastContext()
 
     const toggleGroup = (title: string) => {
         setClosedGroups(prev =>
@@ -80,6 +84,13 @@ export function Sidebar() {
                 ? prev.filter(g => g !== title)
                 : [...prev, title]
         )
+    }
+
+    const handleLogout = async () => {
+        await logout()
+        await fetch("/api/auth/session", { method: "DELETE" })
+        toast.success("Até logo!")
+        router.push("/login")
     }
 
     return (
@@ -183,11 +194,7 @@ export function Sidebar() {
                     {!collapsed && <span>Configurações</span>}
                 </Link>
                 <button
-                    onClick={async () => {
-                        await logout()
-                        await fetch("/api/auth/session", { method: "DELETE" })
-                        router.push("/login")
-                    }}
+                    onClick={() => setShowLogoutModal(true)}
                     className={cn(
                         "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted hover:bg-red-500/10 hover:text-red-400 transition-all",
                         collapsed && "justify-center"
@@ -198,6 +205,31 @@ export function Sidebar() {
                     {!collapsed && <span>Sair</span>}
                 </button>
             </div>
+            <Modal
+                open={showLogoutModal}
+                onClose={() => setShowLogoutModal(false)}
+                title="Sair da conta"
+            >
+                <div className="space-y-5">
+                    <p className="text-sm text-muted">
+                        Tem certeza que deseja sair? Você precisará fazer login novamente para acessar o MyHub.
+                    </p>
+                    <div className="flex items-center gap-3 justify-end">
+                        <button
+                            onClick={() => setShowLogoutModal(false)}
+                            className="px-4 py-2 rounded-lg text-sm text-muted hover:text-white hover:bg-white/5 transition-colors"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-500/20 border border-red-500/30 hover:bg-red-500/30 transition-colors"
+                        >
+                            Sair
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </aside>
     )
 }

@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { getTodayReading } from "@/lib/data/bible-reading-plan"
 import { getDevocional, saveDevocional } from "@/lib/firebase/devocionais"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useToastContext } from "@/app/(hub)/layout"
 
 type Props = {
     onSaved: () => void
@@ -19,8 +20,14 @@ export function DevocionalHoje({ onSaved }: Props) {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [saved, setSaved] = useState(false)
+    const toast = useToastContext()
 
-    const today = new Date().toISOString().split("T")[0]
+    const today = new Date().toLocaleDateString("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).split("/").reverse().join("-")
     const reading = getTodayReading()
 
     // Carrega devocional já salvo do dia
@@ -47,10 +54,13 @@ export function DevocionalHoje({ onSaved }: Props) {
             true
         )
 
-        if (!error) {
+        if (error) {
+            toast.error("Erro ao salvar devocional. Tente novamente.")
+        } else {
             setCompleted(true)
             setSaved(true)
             onSaved()
+            toast.success("Devocional salvo com sucesso!")
             setTimeout(() => setSaved(false), 3000)
         }
 
