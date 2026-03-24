@@ -36,6 +36,8 @@ export default function PlanejamentosPage() {
     const [editingItem, setEditingItem] = useState<Planejamento | null>(null)
     const [categoriaFiltro, setCategoriaFiltro] = useState<string>("todos")
     const [detalheItem, setDetalheItem] = useState<Planejamento | null>(null)
+    const [draggingId, setDraggingId] = useState<string | null>(null)
+    const [dragOverStatus, setDragOverStatus] = useState<PlanejamentoStatus | null>(null)
     const categoriaSugestoes = Array.from(new Set(planejamentos.map(p => p.categoria).filter(Boolean)))
 
     useEffect(() => {
@@ -106,14 +108,24 @@ export default function PlanejamentosPage() {
     }
 
     const handleMoveStatus = async (id: string, status: PlanejamentoStatus) => {
-        const { error } = await updatePlanejamentoStatus(id, status)
-        if (error) {
-            toast.error(error)
-            return
-        }
+        // Salva status anterior para rollback
+        const previous = planejamentos.find(p => p.id === id)?.status
+
+        // Optimistic update — aplica imediatamente na UI
         setPlanejamentos(prev =>
             prev.map(p => p.id === id ? { ...p, status, updatedAt: Date.now() } : p)
         )
+
+        const { error } = await updatePlanejamentoStatus(id, status)
+        if (error) {
+            // Rollback em caso de falha
+            if (previous) {
+                setPlanejamentos(prev =>
+                    prev.map(p => p.id === id ? { ...p, status: previous } : p)
+                )
+            }
+            toast.error(error)
+        }
     }
 
     return (
@@ -172,8 +184,39 @@ export default function PlanejamentosPage() {
                     {COLUNAS.map(({ status, label }) => {
                         const cards = filtrados.filter(p => p.status === status)
 
+                        const isOver = dragOverStatus === status
+
                         return (
-                            <div key={status} className="rounded-xl border border-border bg-card-background p-4">
+                            <div
+                                key={status}
+                                onDragOver={(e) => {
+                                    e.preventDefault()
+                                    e.dataTransfer.dropEffect = "move"
+                                    setDragOverStatus(status)
+                                }}
+                                onDragLeave={(e) => {
+                                    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                        setDragOverStatus(null)
+                                    }
+                                }}
+                                onDrop={(e) => {
+                                    e.preventDefault()
+                                    setDragOverStatus(null)
+                                    if (draggingId) {
+                                        const card = planejamentos.find(p => p.id === draggingId)
+                                        if (card && card.status !== status) {
+                                            handleMoveStatus(draggingId, status)
+                                        }
+                                        setDraggingId(null)
+                                    }
+                                }}
+                                className={cn(
+                                    "rounded-xl border bg-card-background p-4 transition-colors",
+                                    isOver
+                                        ? "border-primary/60 bg-primary/5"
+                                        : "border-border"
+                                )}
+                            >
 
                                 {/* Header da coluna */}
                                 <div className="flex items-center justify-between mb-4">
@@ -190,7 +233,10 @@ export default function PlanejamentosPage() {
                                             <Skeleton key={i} className="h-24 rounded-xl" />
                                         ))
                                     ) : cards.length === 0 ? (
-                                        <div className="rounded-xl border border-dashed border-border p-6 text-center">
+                                        <div className={cn(
+                                            "rounded-xl border border-dashed p-6 text-center transition-colors",
+                                            isOver ? "border-primary/40" : "border-border"
+                                        )}>
                                             <p className="text-xs text-muted">Nenhum plano</p>
                                         </div>
                                     ) : (
@@ -199,6 +245,7 @@ export default function PlanejamentosPage() {
                                                 key={p.id}
                                                 planejamento={p}
                                                 onClick={setDetalheItem}
+                                                onDragStart={(dragged) => setDraggingId(dragged.id)}
                                             />
                                         ))
                                     )}

@@ -1,12 +1,14 @@
 "use client"
 
 import { Calendar, Tag } from "lucide-react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import type { Planejamento } from "@/types/planejamento"
 
 type Props = {
     planejamento: Planejamento
     onClick: (p: Planejamento) => void
+    onDragStart: (p: Planejamento) => void
 }
 
 const PRIORIDADE_STYLES = {
@@ -21,7 +23,9 @@ const PRIORIDADE_LABELS = {
     baixa: "Baixa",
 }
 
-export function PlanejamentoCard({ planejamento, onClick }: Props) {
+export function PlanejamentoCard({ planejamento, onClick, onDragStart }: Props) {
+    const [isDragging, setIsDragging] = useState(false)
+
     const formatDate = (dateStr: string) => {
         const [year, month, day] = dateStr.split("-")
         return `${day}/${month}/${year}`
@@ -29,8 +33,18 @@ export function PlanejamentoCard({ planejamento, onClick }: Props) {
 
     return (
         <div
+            draggable
+            onDragStart={(e) => {
+                e.dataTransfer.effectAllowed = "move"
+                setIsDragging(true)
+                onDragStart(planejamento)
+            }}
+            onDragEnd={() => setIsDragging(false)}
             onClick={() => onClick(planejamento)}
-            className="rounded-xl border border-border bg-background p-4 hover:border-primary/30 hover:bg-primary/5 transition-all cursor-pointer group"
+            className={cn(
+                "rounded-xl border border-border bg-background p-4 hover:border-primary/30 hover:bg-primary/5 transition-all cursor-grab active:cursor-grabbing group select-none",
+                isDragging && "opacity-40 scale-95"
+            )}
         >
             {/* LINHA 1 — título + prioridade */}
             <div className="flex items-start justify-between gap-2 mb-3">
