@@ -1,3 +1,5 @@
+"use server"
+
 import type { RawgGame, RawgSearchResponse } from "@/types/jogo"
 
 const API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY

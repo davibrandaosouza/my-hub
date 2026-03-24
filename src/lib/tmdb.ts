@@ -1,3 +1,5 @@
+"use server"
+
 export type TMDBResult = {
     apiId: string;
     titulo: string;
@@ -6,11 +8,11 @@ export type TMDBResult = {
 }
 
 const GENRE_MAP: Record<number, string> = {
-    28: "Ação", 12: "Aventura", 16: "Animação", 35: "Comédia", 80: "Crime", 
-    99: "Documentário", 18: "Drama", 10751: "Família", 14: "Fantasia", 36: "História", 
-    27: "Terror", 10402: "Música", 9648: "Mistério", 10749: "Romance", 878: "Ficção Científica", 
+    28: "Ação", 12: "Aventura", 16: "Animação", 35: "Comédia", 80: "Crime",
+    99: "Documentário", 18: "Drama", 10751: "Família", 14: "Fantasia", 36: "História",
+    27: "Terror", 10402: "Música", 9648: "Mistério", 10749: "Romance", 878: "Ficção Científica",
     10770: "Cinema TV", 53: "Thriller", 10752: "Guerra", 37: "Faroeste",
-    10759: "Ação/Aventura", 10762: "Kids", 10765: "Sci-Fi/Fants", 10766: "Novela", 
+    10759: "Ação/Aventura", 10762: "Kids", 10765: "Sci-Fi/Fants", 10766: "Novela",
     10767: "Talk Show", 10768: "Política"
 }
 
@@ -24,9 +26,10 @@ export async function searchFilmes(query: string): Promise<TMDBResult[]> {
                 accept: 'application/json'
             }
         })
+
         if (!res.ok) return []
         const data = await res.json()
-        
+
         return data.results.map((item: any) => ({
             apiId: String(item.id),
             titulo: item.title,
@@ -48,7 +51,7 @@ export async function searchSeries(query: string): Promise<TMDBResult[]> {
         })
         if (!res.ok) return []
         const data = await res.json()
-        
+
         return data.results.map((item: any) => ({
             apiId: String(item.id),
             titulo: item.name,
