@@ -16,11 +16,14 @@ const GENRE_MAP: Record<number, string> = {
     10767: "Talk Show", 10768: "Política"
 }
 
-const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
+ 
 
 export async function searchFilmes(query: string): Promise<TMDBResult[]> {
     if (!query) return []
     try {
+        const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || process.env.TMDB_API_KEY
+        if (!TMDB_KEY) console.error("TMDB_KEY is missing!")
+        
         const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}&language=pt-BR&page=1`, {
             headers: {
                 accept: 'application/json'
@@ -44,6 +47,7 @@ export async function searchFilmes(query: string): Promise<TMDBResult[]> {
 export async function searchSeries(query: string): Promise<TMDBResult[]> {
     if (!query) return []
     try {
+        const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || process.env.TMDB_API_KEY
         const res = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}&language=pt-BR&page=1`, {
             headers: {
                 accept: 'application/json'
