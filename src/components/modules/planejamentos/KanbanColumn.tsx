@@ -21,8 +21,8 @@ export function KanbanColumn({ id, label, cards, loading, onCardClick }: Props) 
         <div
             ref={setNodeRef}
             className={`rounded-xl border transition-colors p-4 min-h-[200px] ${isOver
-                    ? "border-primary/50 bg-primary/5"
-                    : "border-border bg-card-background"
+                ? "border-primary/50 bg-primary/5"
+                : "border-border bg-card-background"
                 }`}
         >
             <div className="flex items-center justify-between mb-4">
@@ -42,7 +42,7 @@ export function KanbanColumn({ id, label, cards, loading, onCardClick }: Props) 
                             <Skeleton key={i} className="h-24 rounded-xl" />
                         ))
                     ) : cards.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-border p-6 text-center">
+                        <div className="rounded-xl border border-dashed border-border p-6 text-center min-h-[104px] flex flex-col justify-center">
                             <p className="text-xs text-muted">Nenhum plano</p>
                         </div>
                     ) : (

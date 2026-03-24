@@ -234,7 +234,7 @@ export default function PlanejamentosPage() {
                                         ))
                                     ) : cards.length === 0 ? (
                                         <div className={cn(
-                                            "rounded-xl border border-dashed p-6 text-center transition-colors",
+                                            "rounded-xl border border-dashed p-6 text-center transition-colors min-h-[86px] flex flex-col justify-center",
                                             isOver ? "border-primary/40" : "border-border"
                                         )}>
                                             <p className="text-xs text-muted">Nenhum plano</p>
