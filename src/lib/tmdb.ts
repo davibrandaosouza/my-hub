@@ -1,5 +1,7 @@
 "use server"
 
+import { TMDBMovieResponse, TMDBSearchResponse } from "@/types/filme";
+
 export type TMDBResult = {
     apiId: string;
     titulo: string;
@@ -31,11 +33,11 @@ export async function searchFilmes(query: string): Promise<TMDBResult[]> {
         })
 
         if (!res.ok) return []
-        const data = await res.json()
+        const data: TMDBSearchResponse = await res.json()
 
-        return data.results.map((item: any) => ({
+        return data.results.map((item: TMDBMovieResponse) => ({
             apiId: String(item.id),
-            titulo: item.title,
+            titulo: item.title || item.name || "",
             capaUrl: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "",
             categoria: item.genre_ids?.[0] ? GENRE_MAP[item.genre_ids[0]] || "Filme" : "Filme"
         }))
@@ -54,11 +56,11 @@ export async function searchSeries(query: string): Promise<TMDBResult[]> {
             }
         })
         if (!res.ok) return []
-        const data = await res.json()
+        const data: TMDBSearchResponse = await res.json()
 
-        return data.results.map((item: any) => ({
+        return data.results.map((item: TMDBMovieResponse) => ({
             apiId: String(item.id),
-            titulo: item.name,
+            titulo: item.name || item.title || "",
             capaUrl: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "",
             categoria: item.genre_ids?.[0] ? GENRE_MAP[item.genre_ids[0]] || "Série" : "Série"
         }))

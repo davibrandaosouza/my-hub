@@ -12,3 +12,15 @@ export interface Filme {
     createdAt: number
     updatedAt: number
 }
+
+export type TMDBMovieResponse = {
+    id: number;
+    title?: string;
+    name?: string;
+    poster_path: string | null;
+    genre_ids?: number[];
+}
+
+export type TMDBSearchResponse = {
+    results: TMDBMovieResponse[];
+}

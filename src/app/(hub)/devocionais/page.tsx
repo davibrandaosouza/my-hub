@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Flame } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { Header } from "@/components/layout/Header"
@@ -26,7 +26,6 @@ export default function DevocionalPage() {
     const [thisMonth, setThisMonth] = useState<Devocional[]>([])
     const [refreshKey, setRefreshKey] = useState(0)
     const [pageLoading, setPageLoading] = useState(true)
-    const isInitialLoad = useRef(true)
 
     const loadData = useCallback(async () => {
         if (!userId) return
@@ -36,17 +35,22 @@ export default function DevocionalPage() {
         ])
         setAllYear(yearData)
         setThisMonth(monthData)
-        if (isInitialLoad.current) {
-            isInitialLoad.current = false
-            setPageLoading(false)
-        } else {
-            setRefreshKey(k => k + 1)
-        }
+        setRefreshKey(k => k + 1)
     }, [userId, currentYear, currentMonth])
 
     useEffect(() => {
-        void loadData()
-    }, [loadData])
+        if (!userId) return
+        async function fetchInitial() {
+            const [yearData, monthData] = await Promise.all([
+                getDevocionalsByYear(userId!, currentYear),
+                getDevocionalsByMonth(userId!, currentYear, currentMonth),
+            ])
+            setAllYear(yearData)
+            setThisMonth(monthData)
+            setPageLoading(false)
+        }
+        void fetchInitial()
+    }, [userId, currentYear, currentMonth])
 
     const streak = calculateStreak(allYear)
     const totalThisMonth = thisMonth.filter(d => d.completed).length

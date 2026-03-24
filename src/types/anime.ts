@@ -12,3 +12,24 @@ export interface Anime {
     createdAt: number
     updatedAt: number
 }
+
+export type JikanAnimeResponse = {
+    mal_id: number;
+    title: string;
+    title_english?: string;
+    images: {
+        webp?: {
+            large_image_url?: string;
+        };
+        jpg?: {
+            large_image_url?: string;
+        };
+    };
+    genres?: Array<{
+        name: string;
+    }>;
+}
+
+export type JikanSearchResponse = {
+    data: JikanAnimeResponse[];
+}

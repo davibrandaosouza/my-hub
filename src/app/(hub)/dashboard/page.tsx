@@ -7,23 +7,32 @@ import { Skeleton } from "@/components/ui/skeleton"
 import {
     FileText, Timer, Tv, Film,
     MonitorPlay, Gamepad2, Guitar, RotateCcw,
-    BookHeart, CheckCircle, Flame, Calendar, FileEdit,
-    Clock, Kanban
+    BookHeart, Calendar, FileEdit,
+    Clock, Kanban,
+    GraduationCap,
+    Code2,
+    UploadCloud
 } from "lucide-react"
 import Link from "next/link"
-import { getDevocionalsByYear, getDevocionalsByMonth, calculateStreak } from "@/lib/firebase/devocionais"
+import { doc, setDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase/config"
+import { getDashboardImage } from "@/lib/firebase/dashboard"
+import { uploadDashboardImageAction } from "@/app/actions/dashboard"
+import { ImageCropModal } from "@/components/dashboard/ImageCropModal"
 
 const quickAccessItems = [
+    { label: "Devocionais", description: "Ver devocional", href: "/devocionais", icon: BookHeart },
     { label: "Planejamentos", description: "Ver tarefas", href: "/planejamentos", icon: Kanban },
     { label: "Anotações", description: "Ver notas", href: "/anotacoes", icon: FileText },
     { label: "Pomodoro", description: "Iniciar sessão", href: "/pomodoro", icon: Timer },
+    { label: "Rotinas", description: "Ver hoje", href: "/rotinas", icon: RotateCcw },
+    { label: "Guitarra", description: "Praticar", href: "/guitarra", icon: Guitar },
+    { label: "UFES", description: "Ver matérias", href: "/ufes", icon: GraduationCap },
+    { label: "Programação", description: "Estudar", href: "/programacao", icon: Code2 },
     { label: "Animes", description: "Ver lista", href: "/animes", icon: Tv },
     { label: "Filmes", description: "Ver lista", href: "/filmes", icon: Film },
     { label: "Séries", description: "Ver lista", href: "/series", icon: MonitorPlay },
     { label: "Jogos", description: "Ver lista", href: "/jogos", icon: Gamepad2 },
-    { label: "Guitarra", description: "Praticar", href: "/guitarra", icon: Guitar },
-    { label: "Rotinas", description: "Ver hoje", href: "/rotinas", icon: RotateCcw },
-    { label: "Devocionais", description: "Ver devocional", href: "/devocionais", icon: BookHeart },
 ]
 
 const upcomingEvents = [
@@ -39,47 +48,85 @@ const recentNotes = [
     { title: "Recomendações de livros", preview: "Lista de livros para ler...", when: "2 dias atrás" },
 ]
 
-type DashboardStats = {
-    streak: number
-    devocionalHoje: boolean
-}
-
 export default function DashboardPage() {
     const { user } = useAuth()
-    const [stats, setStats] = useState<DashboardStats | null>(null)
     const [loading, setLoading] = useState(true)
+    const [imageUrl, setImageUrl] = useState<string | null>(null)
+    const [uploading, setUploading] = useState(false)
+    const [selectedFile, setSelectedFile] = useState<string | null>(null)
+    const [isCropModalOpen, setIsCropModalOpen] = useState(false)
 
     const firstName = user?.displayName?.split(" ")[0] ?? "de volta"
-    const currentYear = new Date().getFullYear()
-    const currentMonth = new Date().getMonth() + 1
-    const today = new Date().toLocaleDateString("pt-BR", {
-        timeZone: "America/Sao_Paulo",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    }).split("/").reverse().join("-")
 
     useEffect(() => {
         if (!user?.uid) return
-        async function loadStats() {
-            const [yearData, monthData] = await Promise.all([
-                getDevocionalsByYear(user!.uid, currentYear),
-                getDevocionalsByMonth(user!.uid, currentYear, currentMonth),
-            ])
-            const streak = calculateStreak(yearData)
-            const devocionalHoje = yearData.some(d => d.date === today && d.completed)
-            setStats({ streak, devocionalHoje })
-            setLoading(false)
-        }
-        void loadStats()
-    }, [user?.uid, currentYear, currentMonth, today])
+        let isMounted = true
 
-    const statsCards = [
-        { icon: CheckCircle, label: "Tarefas Feitas", value: "—", color: "text-emerald-400", bg: "bg-emerald-400/10" },
-        { icon: Timer, label: "Pomodoros", value: "—", color: "text-orange-400", bg: "bg-orange-400/10" },
-        { icon: BookHeart, label: "Devocional", value: stats?.devocionalHoje ? "✓" : "—", color: "text-yellow-400", bg: "bg-yellow-400/10" },
-        { icon: Flame, label: "Sequência", value: stats ? `${stats.streak}d` : "0d", color: "text-red-400", bg: "bg-red-400/10" },
-    ]
+        async function load() {
+            try {
+                const url = await getDashboardImage(user!.uid)
+                if (isMounted && url) setImageUrl(url)
+            } catch (error) {
+                console.error("Erro ao carregar imagem:", error)
+                // Even on error, we should stop the initial skeleton
+            } finally {
+                if (isMounted) setLoading(false)
+            }
+        }
+
+        void load()
+        return () => { isMounted = false }
+    }, [user])
+
+    const handleFileSelection = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file || !user?.uid) return
+
+        const reader = new FileReader()
+        reader.addEventListener("load", () => {
+            setSelectedFile(reader.result as string)
+            setIsCropModalOpen(true)
+        })
+        reader.readAsDataURL(file)
+
+        // Limpar o input para permitir selecionar a mesma imagem se for deletada
+        e.target.value = ""
+    }
+
+    const handleCropComplete = async (croppedBlob: Blob) => {
+        if (!user?.uid) return
+        setIsCropModalOpen(false)
+
+        try {
+            setUploading(true)
+            const formData = new FormData()
+            // Transformar blob em File para o Server Action
+            const file = new File([croppedBlob], "lembranca.jpg", { type: "image/jpeg" })
+            formData.append("file", file)
+
+            // 1. Upload para o Vercel Blob e deletar antiga (no servidor)
+            const url = await uploadDashboardImageAction(user.uid, formData, imageUrl)
+
+            // 2. Salvar link no Firestore (no cliente, onde temos Auth)
+            const userDocRef = doc(db, "dashboard", user.uid)
+            await setDoc(userDocRef, { imageUrl: url }, { merge: true })
+
+            setImageUrl(url)
+        } catch (error: unknown) {
+            console.error("Erro ao fazer upload da imagem recortada:", error)
+            const err = error as { message?: string; digest?: string }
+            const isSizeError = err.message?.includes("exceeded 1 MB limit") || err.digest?.includes("2427213769")
+
+            if (isSizeError) {
+                alert("A imagem é muito grande! Tente uma imagem com menos zoom ou menor.")
+            } else {
+                alert("Erro ao salvar imagem. Verifique sua conexão ou se as permissões foram configuradas.")
+            }
+        } finally {
+            setUploading(false)
+            setSelectedFile(null)
+        }
+    }
 
     return (
         <div>
@@ -101,65 +148,99 @@ export default function DashboardPage() {
                     </div>
                 )}
 
-                {/* ── CARDS DE STATS ── */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {loading ? (
-                        Array.from({ length: 4 }).map((_, i) => (
-                            <Skeleton key={i} className="h-[74px] rounded-xl" />
-                        ))
-                    ) : (
-                        statsCards.map((card) => {
-                            const Icon = card.icon
-                            return (
-                                <div
-                                    key={card.label}
-                                    className="rounded-xl border border-border bg-card-background p-4 flex items-center gap-4"
-                                >
-                                    <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center shrink-0`}>
-                                        <Icon className={`w-5 h-5 ${card.color}`} />
-                                    </div>
-                                    <div>
-                                        <p className="text-2xl font-bold text-white leading-none mb-1">{card.value}</p>
-                                        <p className="text-xs text-muted">{card.label}</p>
+                {/* ── CONTEÚDO PRINCIPAL (ACESSO RÁPIDO + UPLOAD) ── */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    {/* Acesso Rápido - 2/3 do espaço */}
+                    <div className="lg:col-span-2">
+                        <p className="text-xs font-semibold tracking-widest text-muted uppercase mb-3">
+                            Acesso Rápido
+                        </p>
+                        {loading ? (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {Array.from({ length: 12 }).map((_, i) => (
+                                    <Skeleton key={i} className="h-[96px] rounded-xl" />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {quickAccessItems.map((item) => {
+                                    const Icon = item.icon
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            className="rounded-xl border border-border bg-card-background p-4 hover:border-primary/40 hover:bg-primary/5 transition-all group"
+                                        >
+                                            <Icon className="w-5 h-5 text-primary mb-3" />
+                                            <p className="text-sm font-medium text-white group-hover:text-primary transition-colors">
+                                                {item.label}
+                                            </p>
+                                            <p className="text-xs text-muted mt-0.5">{item.description}</p>
+                                        </Link>
+                                    )
+                                })}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Upload de Imagem - 1/3 do espaço */}
+                    <div className="lg:col-span-1 flex flex-col">
+                        <p className="text-xs font-semibold tracking-widest text-muted uppercase mb-3 md:mt-0 mt-4">
+                            Lembrança
+                        </p>
+                        <label className={`flex-1 w-full rounded-xl border-2 border-dashed border-border bg-card-background/40 flex flex-col items-center justify-center p-6 transition-all group relative overflow-hidden min-h-[220px] ${!imageUrl && !uploading ? "hover:border-primary/50 hover:bg-primary/5 cursor-pointer" : "cursor-pointer"}`}>
+                            {uploading ? (
+                                <div className="flex flex-col items-center">
+                                    <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin mb-3"></div>
+                                    <p className="text-sm font-medium text-white">Salvando...</p>
+                                </div>
+                            ) : imageUrl ? (
+                                <div className="absolute inset-0 w-full h-full group">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={imageUrl} alt="Lembrança do Dashboard" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm shadow-xl flex items-center justify-center mb-2">
+                                            <UploadCloud className="w-5 h-5 text-white" />
+                                        </div>
+                                        <span className="text-xs font-medium text-white shadow-sm">Alterar Foto</span>
                                     </div>
                                 </div>
-                            )
-                        })
-                    )}
+                            ) : (
+                                <>
+                                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/20 transition-all">
+                                        <UploadCloud className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <h3 className="text-sm font-semibold text-white mb-2 text-center text-balance">
+                                        Adicionar Imagem
+                                    </h3>
+                                    <p className="text-[11px] text-muted text-center max-w-[150px]">
+                                        Clique ou arraste uma foto para destacar aqui
+                                    </p>
+                                </>
+                            )}
+                            <input
+                                type="file"
+                                className="hidden"
+                                accept="image/png, image/jpeg, image/gif, image/webp"
+                                onChange={handleFileSelection}
+                                disabled={uploading}
+                            />
+                        </label>
+                    </div>
+
                 </div>
 
-                {/* ── ACESSO RÁPIDO ── */}
-                <div>
-                    <p className="text-xs font-semibold tracking-widest text-muted uppercase mb-3">
-                        Acesso Rápido
-                    </p>
-                    {loading ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                            {Array.from({ length: 10 }).map((_, i) => (
-                                <Skeleton key={i} className="h-[96px] rounded-xl" />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                            {quickAccessItems.map((item) => {
-                                const Icon = item.icon
-                                return (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        className="rounded-xl border border-border bg-card-background p-4 hover:border-primary/40 hover:bg-primary/5 transition-all group"
-                                    >
-                                        <Icon className="w-5 h-5 text-primary mb-3" />
-                                        <p className="text-sm font-medium text-white group-hover:text-primary transition-colors">
-                                            {item.label}
-                                        </p>
-                                        <p className="text-xs text-muted mt-0.5">{item.description}</p>
-                                    </Link>
-                                )
-                            })}
-                        </div>
-                    )}
-                </div>
+                {isCropModalOpen && selectedFile && (
+                    <ImageCropModal
+                        image={selectedFile}
+                        onClose={() => {
+                            setIsCropModalOpen(false)
+                            setSelectedFile(null)
+                        }}
+                        onCropComplete={handleCropComplete}
+                    />
+                )}
 
                 {/* ── PRÓXIMOS EVENTOS + NOTAS RECENTES ── */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

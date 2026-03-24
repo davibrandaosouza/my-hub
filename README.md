@@ -35,33 +35,35 @@ MyHub nasceu com dois objetivos:
 | **Tailwind CSS v4**         | Estilização, design system, dark mode                  |
 | **Firebase Auth**           | Autenticação — email/senha e Google OAuth              |
 | **Firestore**               | Banco de dados NoSQL em tempo real                     |
-| **Firebase Storage**        | Upload de arquivos e imagens                           |
+| **Vercel Blob**             | Armazenamento de arquivos e imagens                    |
 | **Zustand**                 | Gerenciamento de estado global                         |
 | **TanStack Query**          | Cache, sincronização e estado de servidor              |
 | **React Hook Form**         | Gerenciamento de formulários performático              |
 | **Zod**                     | Validação de schemas (frontend e backend)              |
+| **react-easy-crop**         | Biblioteca para recorte e ajuste de imagens            |
+| **dnd-kit**                 | Sistema de Drag and Drop para kanban e listas          |
 | **Lucide React**            | Ícones                                                 |
 
 ---
 
 ## Módulos
 
-| Módulo            | Descrição                                           | Status        |
-| ----------------- | --------------------------------------------------- | ------------- |
-| **Autenticação**  | Login, cadastro, OAuth Google, recuperação de senha | ✅ Concluído  |
-| **Dashboard**     | Visão geral do dia, stats, acesso rápido, eventos   | ✅ Concluído  |
-| **Devocionais**   | Registro diário, versículo, reflexão, streak        | 🔲 Em breve   |
-| **Planejamentos** | Kanban board, metas, projetos com prioridades       | 🔲 Em breve   |
-| **Anotações**     | Editor markdown, tags, busca, auto-save             | 🔲 Em breve   |
-| **Rotinas**       | Hábitos diários, checklist por período, heatmap     | 🔲 Em breve   |
-| **Pomodoro**      | Timer, fila de tarefas, estatísticas de foco        | 🔲 Em breve   |
-| **Guitarra**      | Acordes, progressões, Web Audio API                 | 🔲 Em breve   |
-| **UFES**          | Disciplinas, provas, grade e acompanhamento         | 🔲 Em breve   |
-| **Programação**   | Estudos, projetos, recursos e progresso             | 🔲 Em breve   |
-| **Animes**        | Lista de animes, status, integração AniList API     | 🔲 Em breve   |
-| **Filmes**        | Lista de filmes, status, avaliações                 | 🔲 Em breve   |
-| **Séries**        | Lista de séries, episódios assistidos               | 🔲 Em breve   |
-| **Jogos**         | Lista de jogos, status, integração IGDB API         | 🔲 Em breve   |
+| Módulo            | Descrição                                           | Status       |
+| ----------------- | --------------------------------------------------- | ------------ |
+| **Autenticação**  | Login, cadastro, OAuth Google, recuperação de senha | ✅ Concluído |
+| **Dashboard**     | Visão geral do dia, stats, acesso rápido, eventos   | ✅ Concluído |
+| **Devocionais**   | Registro diário, versículo, reflexão, streak        | ✅ Concluído |
+| **Planejamentos** | Kanban board, metas, projetos com prioridades       | ✅ Concluído |
+| **Anotações**     | Editor markdown, tags, busca, auto-save             | 🔲 Em breve  |
+| **Rotinas**       | Hábitos diários, checklist por período, heatmap     | 🔲 Em breve  |
+| **Pomodoro**      | Timer, fila de tarefas, estatísticas de foco        | 🔲 Em breve  |
+| **Guitarra**      | Acordes, progressões, Web Audio API                 | 🔲 Em breve  |
+| **UFES**          | Disciplinas, provas, grade e acompanhamento         | 🔲 Em breve  |
+| **Programação**   | Estudos, projetos, recursos e progresso             | 🔲 Em breve  |
+| **Animes**        | Lista de animes, status, integração AniList API     | ✅ Concluído |
+| **Filmes**        | Lista de filmes, status, avaliações                 | ✅ Concluído |
+| **Séries**        | Lista de séries, episódios assistidos               | ✅ Concluído |
+| **Jogos**         | Lista de jogos, status, integração RAWG API         | ✅ Concluído |
 
 ---
 
@@ -114,6 +116,14 @@ const { sessions, startTimer, pauseTimer } = usePomodoro();
 
 Listeners em tempo real para reagir a mudanças de estado sem necessidade de polling, com limpeza automática ao desmontar componentes para evitar memory leaks.
 
+### Shared Component Architecture
+
+Abstração de componentes de UI complexos (como `MediaCard`, `MediaStatsBar` e modais de detalhes) para garantir consistência visual e facilitar a manutenção em diferentes módulos (Animes, Filmes, Jogos).
+
+### Type-Safe API Integration
+
+A aplicação utiliza interfaces TypeScript rigorosas para mapear as respostas das APIs externas (Jikan, TMDB, RAWG). Isso garante que os dados sejam validados e tipados corretamente desde o momento em que saem do `fetch` até serem consumidos pelos componentes UI, eliminando erros de propriedade inexistente e facilitando o desenvolvimento.
+
 ---
 
 ## Autenticação e Segurança
@@ -165,7 +175,7 @@ Regras de segurança configuradas diretamente no banco garantem que cada usuári
 - [ ] Módulo de Anotações
 - [ ] Módulo de Pomodoro
 - [ ] Módulo de Rotinas
-- [ ] Módulo de Devocionais
+- [x] Módulo de Devocionais
 
 ### Fase 4 — Estudos
 
@@ -175,14 +185,15 @@ Regras de segurança configuradas diretamente no banco garantem que cada usuári
 
 ### Fase 5 — Planejamento
 
-- [ ] Módulo de Planejamentos (Kanban)
+- [x] Módulo de Planejamentos (Kanban)
 - [ ] Módulo de Calendário
 
-### Fase 6 — Entretenimento
+### Fase 6 — Entretenimento ✅
 
-- [ ] Módulo de Animes (AniList API)
-- [ ] Módulo de Filmes e Séries
-- [ ] Módulo de Jogos (IGDB API)
+- [x] Módulo de Animes (Jikan API v4)
+- [x] Módulo de Filmes e Séries (TMDB API)
+- [x] Módulo de Jogos (RAWG API)
+- [x] Arquitetura de componentes compartilhados para mídia
 
 ### Fase 7 — Avançado
 
