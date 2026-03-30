@@ -13,9 +13,20 @@ const MONTHS_SHORT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
 const DAYS_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 
 export function DevocionalHeatmap({ devocionais, year }: Props) {
-    const completedDates = new Set(
-        devocionais.filter(d => d.completed).map(d => d.date)
-    )
+    const getDevocionalStatus = (date: Date) => {
+        const str = date.toISOString().split("T")[0]
+        const dev = devocionais.find(d => d.date === str && d.completed)
+        if (!dev) return null
+
+        const createdStr = new Intl.DateTimeFormat('en-CA', {
+            timeZone: "America/Sao_Paulo",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        }).format(new Date(dev.createdAt))
+
+        return dev.date < createdStr ? "late" : "ontime"
+    }
 
     // Gera todas as semanas do ano
     const startDate = new Date(year, 0, 1)
@@ -35,11 +46,6 @@ export function DevocionalHeatmap({ devocionais, year }: Props) {
             current.setDate(current.getDate() + 1)
         }
         weeks.push(week)
-    }
-
-    const isCompleted = (date: Date) => {
-        const str = date.toISOString().split("T")[0]
-        return completedDates.has(str)
     }
 
     const isCurrentYear = (date: Date) => date.getFullYear() === year
@@ -95,7 +101,7 @@ export function DevocionalHeatmap({ devocionais, year }: Props) {
                                 <div key={wi} className="flex flex-col gap-[2px]">
                                     {week.map((date, di) => {
                                         const inYear = isCurrentYear(date)
-                                        const done = isCompleted(date)
+                                        const status = getDevocionalStatus(date)
                                         const todayCell = isToday(date)
 
                                         return (
@@ -105,9 +111,10 @@ export function DevocionalHeatmap({ devocionais, year }: Props) {
                                                 className={cn(
                                                     "w-[14px] h-[14px] rounded-sm",
                                                     !inYear && "opacity-0",
-                                                    inYear && !done && "bg-white/5",
-                                                    done && "bg-emerald-500",
-                                                    todayCell && !done && "ring-1 ring-primary",
+                                                    inYear && !status && "bg-white/5",
+                                                    status === "ontime" && "bg-emerald-500",
+                                                    status === "late" && "bg-amber-500",
+                                                    todayCell && !status && "ring-1 ring-primary",
                                                 )}
                                             />
                                         )
@@ -118,11 +125,19 @@ export function DevocionalHeatmap({ devocionais, year }: Props) {
                     </div>
 
                     {/* Legenda */}
-                    <div className="flex items-center justify-end gap-2 mt-2">
-                        <span className="text-[10px] text-muted">Não feito</span>
-                        <div className="w-[14px] h-[14px] rounded-sm bg-white/5" />
-                        <div className="w-[14px] h-[14px] rounded-sm bg-emerald-500" />
-                        <span className="text-[10px] text-muted">Feito</span>
+                    <div className="flex items-center justify-end gap-3 mt-4">
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-[12px] h-[12px] rounded-sm bg-white/5 border border-white/10" />
+                            <span className="text-[10px] text-muted">Vazio</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-[12px] h-[12px] rounded-sm bg-emerald-500 shadow-sm shadow-emerald-900/20" />
+                            <span className="text-[10px] text-muted">No dia</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-[12px] h-[12px] rounded-sm bg-amber-500 shadow-sm shadow-amber-900/20" />
+                            <span className="text-[10px] text-muted">Atrasado</span>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -89,7 +89,7 @@ export function ImageCropModal({ image, onClose, onCropComplete }: ImageCropModa
             <UploadCloud className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold text-white">Ajustar Imagem</h3>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-white/10 rounded-full transition-colors text-muted hover:text-white"
           >
@@ -108,9 +108,9 @@ export function ImageCropModal({ image, onClose, onCropComplete }: ImageCropModa
             onCropComplete={onCropCompleteInternal}
             onZoomChange={onZoomChange}
             classes={{
-                containerClassName: "bg-black/20",
-                mediaClassName: "max-w-none",
-                cropAreaClassName: "border-2 border-primary shadow-[0_0_0_9999px_rgba(0,0,0,0.6)]"
+              containerClassName: "bg-black/20",
+              mediaClassName: "max-w-none",
+              cropAreaClassName: "border-2 border-primary shadow-[0_0_0_9999px_rgba(0,0,0,0.6)]"
             }}
           />
         </div>
@@ -141,7 +141,7 @@ export function ImageCropModal({ image, onClose, onCropComplete }: ImageCropModa
             </button>
             <button
               onClick={handleConfirm}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-black text-sm font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+              className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
             >
               <Check className="w-4 h-4" />
               Confirmar

@@ -50,6 +50,8 @@ export async function saveDevocional(
 ): Promise<{ error: string | null }> {
     try {
         const ref = doc(db, "devocionais", getDocId(userId, date))
+        const existing = await getDoc(ref)
+        
         const data: Devocional = {
             id: getDocId(userId, date),
             userId,
@@ -57,7 +59,7 @@ export async function saveDevocional(
             reading,
             reflection,
             completed,
-            createdAt: Date.now(),
+            createdAt: existing.exists() ? (existing.data() as Devocional).createdAt : Date.now(),
         }
         await setDoc(ref, data, { merge: true })
         return { error: null }

@@ -30,3 +30,13 @@ export async function uploadDashboardImageAction(
 
     return blob.url
 }
+
+export async function deleteDashboardImageAction(imageUrl: string) {
+    if (!imageUrl) return
+    try {
+        await del(imageUrl)
+    } catch (error) {
+        console.error("Erro ao deletar imagem do Blob:", error)
+        throw new Error("Erro ao deletar imagem do servidor.")
+    }
+}

@@ -7,6 +7,8 @@ import type { Devocional } from "@/types/devocional"
 
 type Props = {
     devocionais: Devocional[]
+    selectedDate: string
+    onDateSelect: (date: string) => void
 }
 
 const DAYS = ["D", "S", "T", "Q", "Q", "S", "S"]
@@ -15,13 +17,11 @@ const MONTHS = [
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
 ]
 
-export function DevocionalCalendar({ devocionais }: Props) {
+export function DevocionalCalendar({ devocionais, selectedDate, onDateSelect }: Props) {
     const today = new Date()
-    const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
-
-    const completedDates = new Set(
-        devocionais.filter(d => d.completed).map(d => d.date)
-    )
+    // Inicializa o mês atual baseado na data selecionada ou hoje
+    const [initialYear, initialMonth] = selectedDate.split("-").map(Number)
+    const [currentDate, setCurrentDate] = useState(new Date(initialYear, initialMonth - 1, 1))
 
     const year = currentDate.getFullYear()
     const month = currentDate.getMonth()
@@ -36,10 +36,20 @@ export function DevocionalCalendar({ devocionais }: Props) {
         month === today.getMonth() &&
         year === today.getFullYear()
 
-    const isCompleted = (day: number) => {
+    const getDevocionalStatus = (day: number) => {
         const pad = (n: number) => String(n).padStart(2, "0")
         const dateStr = `${year}-${pad(month + 1)}-${pad(day)}`
-        return completedDates.has(dateStr)
+        const dev = devocionais.find(d => d.date === dateStr && d.completed)
+        if (!dev) return null
+
+        const createdStr = new Intl.DateTimeFormat('en-CA', {
+            timeZone: "America/Sao_Paulo",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        }).format(new Date(dev.createdAt))
+
+        return dev.date < createdStr ? "late" : "ontime"
     }
 
     return (
@@ -85,25 +95,39 @@ export function DevocionalCalendar({ devocionais }: Props) {
 
                 {Array.from({ length: daysInMonth }).map((_, i) => {
                     const day = i + 1
-                    const completed = isCompleted(day)
+                    const status = getDevocionalStatus(day)
                     const todayDay = isToday(day)
+                    const pad = (n: number) => String(n).padStart(2, "0")
+                    const dateStr = `${year}-${pad(month + 1)}-${pad(day)}`
+                    const isSelected = selectedDate === dateStr
 
                     return (
-                        <div
+                        <button
                             key={day}
+                            onClick={() => onDateSelect(dateStr)}
                             className={cn(
-                                "aspect-square flex items-center justify-center rounded-lg text-xs transition-all",
-                                completed && "bg-emerald-500/20",
-                                todayDay && !completed && "border border-primary text-primary font-bold",
-                                !completed && !todayDay && "text-muted",
+                                "aspect-square flex items-center justify-center rounded-lg text-xs transition-all relative",
+                                status === "ontime" && "bg-emerald-500/20 hover:bg-emerald-500/30",
+                                status === "late" && "bg-amber-500/20 hover:bg-amber-500/30",
+                                isSelected && !status && "bg-primary/20 ring-1 ring-primary",
+                                isSelected && status && "ring-2 ring-primary ring-offset-2 ring-offset-background z-10",
+                                todayDay && !status && !isSelected && "border border-primary/50 text-white font-bold",
+                                !status && !todayDay && !isSelected && "text-muted hover:bg-white/5",
                             )}
+                            title={status === "late" ? "Devocional Atrasado" : status === "ontime" ? "Devocional Concluído" : ""}
                         >
-                            {completed ? (
-                                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                            {status ? (
+                                <CheckCircle className={cn(
+                                    "w-5 h-5",
+                                    status === "ontime" ? "text-emerald-400" : "text-amber-400"
+                                )} />
                             ) : (
                                 <span>{day}</span>
                             )}
-                        </div>
+                            {todayDay && !status && (
+                                <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary rounded-full" />
+                            )}
+                        </button>
                     )
                 })}
             </div>

@@ -26,6 +26,16 @@ export default function DevocionalPage() {
     const [thisMonth, setThisMonth] = useState<Devocional[]>([])
     const [refreshKey, setRefreshKey] = useState(0)
     const [pageLoading, setPageLoading] = useState(true)
+    
+    // Data selecionada no calendário (formato YYYY-MM-DD)
+    const [selectedDate, setSelectedDate] = useState(() => {
+        return new Date().toLocaleDateString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        }).split("/").reverse().join("-")
+    })
 
     const loadData = useCallback(async () => {
         if (!userId) return
@@ -101,7 +111,11 @@ export default function DevocionalPage() {
                                 </div>
                             </div>
                         ) : (
-                            <DevocionalCalendar devocionais={allYear} />
+                            <DevocionalCalendar 
+                                devocionais={allYear} 
+                                selectedDate={selectedDate}
+                                onDateSelect={setSelectedDate}
+                            />
                         )}
                     </div>
 
@@ -116,7 +130,11 @@ export default function DevocionalPage() {
                                 <Skeleton className="h-10 w-full rounded-lg" />
                             </div>
                         ) : (
-                            <DevocionalHoje key={refreshKey} onSaved={loadData} />
+                            <DevocionalHoje 
+                                key={`${selectedDate}-${refreshKey}`} 
+                                date={selectedDate}
+                                onSaved={loadData} 
+                            />
                         )}
                     </div>
 

@@ -1,14 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { Header } from "@/components/layout/Header"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
     FileText, Timer, Tv, Film,
     MonitorPlay, Gamepad2, Guitar, RotateCcw,
-    BookHeart, Calendar, FileEdit,
-    Clock, Kanban,
+    BookHeart, Kanban,
     GraduationCap,
     Code2,
     UploadCloud
@@ -16,9 +15,16 @@ import {
 import Link from "next/link"
 import { doc, setDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase/config"
-import { getDashboardImage } from "@/lib/firebase/dashboard"
-import { uploadDashboardImageAction } from "@/app/actions/dashboard"
+import { getDashboardImage, getDashboardEvents } from "@/lib/firebase/dashboard"
+import { uploadDashboardImageAction, deleteDashboardImageAction } from "@/app/actions/dashboard"
 import { ImageCropModal } from "@/components/dashboard/ImageCropModal"
+import { Trash2, Check, X } from "lucide-react"
+import { useToastContext } from "@/app/(hub)/layout"
+import { getNotes } from "@/lib/firebase/anotacoes"
+import type { Note } from "@/types/anotacao"
+import type { DashboardEvent } from "@/types/dashboard"
+import { RecentNotes } from "@/components/modules/dashboard/RecentNotes"
+import { UpcomingEvents } from "@/components/modules/dashboard/UpcomingEvents"
 
 const quickAccessItems = [
     { label: "Devocionais", description: "Ver devocional", href: "/devocionais", icon: BookHeart },
@@ -35,19 +41,6 @@ const quickAccessItems = [
     { label: "Jogos", description: "Ver lista", href: "/jogos", icon: Gamepad2 },
 ]
 
-const upcomingEvents = [
-    { time: "09:00", title: "Reunião da equipe", tag: "Trabalho", tagColor: "bg-blue-500/20 text-blue-400" },
-    { time: "12:30", title: "Almoço com amigos", tag: "Pessoal", tagColor: "bg-purple-500/20 text-purple-400" },
-    { time: "15:00", title: "Revisão de projeto", tag: "Trabalho", tagColor: "bg-blue-500/20 text-blue-400" },
-    { time: "18:00", title: "Academia", tag: "Saúde", tagColor: "bg-emerald-500/20 text-emerald-400" },
-]
-
-const recentNotes = [
-    { title: "Ideias de projetos para Q2", preview: "Ideias para novas funcionalidades...", when: "Hoje" },
-    { title: "Notas de reunião - Cliente", preview: "Pontos-chave discutidos...", when: "Ontem" },
-    { title: "Recomendações de livros", preview: "Lista de livros para ler...", when: "2 dias atrás" },
-]
-
 export default function DashboardPage() {
     const { user } = useAuth()
     const [loading, setLoading] = useState(true)
@@ -55,8 +48,28 @@ export default function DashboardPage() {
     const [uploading, setUploading] = useState(false)
     const [selectedFile, setSelectedFile] = useState<string | null>(null)
     const [isCropModalOpen, setIsCropModalOpen] = useState(false)
+    const [isDeleteConfirm, setIsDeleteConfirm] = useState(false)
+    const [recentNotes, setRecentNotes] = useState<Note[]>([])
+    const [upcomingEvents, setUpcomingEvents] = useState<DashboardEvent[]>([])
+    const [dataLoading, setDataLoading] = useState(true)
+
+    const toast = useToastContext()
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const firstName = user?.displayName?.split(" ")[0] ?? "de volta"
+
+    const loadDashboardData = async (uid: string) => {
+        try {
+            const [notes, events] = await Promise.all([
+                getNotes(uid),
+                getDashboardEvents(uid)
+            ])
+            setRecentNotes(notes.slice(0, 5))
+            setUpcomingEvents(events)
+        } finally {
+            setDataLoading(false)
+        }
+    }
 
     useEffect(() => {
         if (!user?.uid) return
@@ -66,9 +79,10 @@ export default function DashboardPage() {
             try {
                 const url = await getDashboardImage(user!.uid)
                 if (isMounted && url) setImageUrl(url)
+                
+                await loadDashboardData(user!.uid)
             } catch (error) {
-                console.error("Erro ao carregar imagem:", error)
-                // Even on error, we should stop the initial skeleton
+                console.error("Erro ao carregar dados do dashboard:", error)
             } finally {
                 if (isMounted) setLoading(false)
             }
@@ -91,6 +105,40 @@ export default function DashboardPage() {
 
         // Limpar o input para permitir selecionar a mesma imagem se for deletada
         e.target.value = ""
+    }
+
+    const handleRemoveImage = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDeleteConfirm(true)
+    }
+
+    const cancelRemoveImage = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDeleteConfirm(false)
+    }
+
+    const confirmRemoveImage = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        if (!user?.uid || !imageUrl) return
+
+        try {
+            setUploading(true)
+            await deleteDashboardImageAction(imageUrl)
+            const userDocRef = doc(db, "dashboard", user.uid)
+            await setDoc(userDocRef, { imageUrl: null }, { merge: true })
+            setImageUrl(null)
+            setIsDeleteConfirm(false)
+            toast.success("Imagem removida com sucesso!")
+        } catch (error) {
+            console.error("Erro ao remover imagem:", error)
+            alert("Erro ao remover imagem. Tente novamente.")
+        } finally {
+            setUploading(false)
+        }
     }
 
     const handleCropComplete = async (croppedBlob: Blob) => {
@@ -189,7 +237,10 @@ export default function DashboardPage() {
                         <p className="text-xs font-semibold tracking-widest text-muted uppercase mb-3 md:mt-0 mt-4">
                             Lembrança
                         </p>
-                        <label className={`flex-1 w-full rounded-xl border-2 border-dashed border-border bg-card-background/40 flex flex-col items-center justify-center p-6 transition-all group relative overflow-hidden min-h-[220px] ${!imageUrl && !uploading ? "hover:border-primary/50 hover:bg-primary/5 cursor-pointer" : "cursor-pointer"}`}>
+                        <div
+                            className={`flex-1 w-full rounded-xl border-2 border-dashed border-border bg-card-background/40 flex flex-col items-center justify-center p-6 transition-all group relative overflow-hidden min-h-[220px] ${!uploading && !isDeleteConfirm ? "hover:border-primary/50 hover:bg-primary/5 cursor-pointer" : ""}`}
+                            onClick={() => !uploading && !isDeleteConfirm && fileInputRef.current?.click()}
+                        >
                             {uploading ? (
                                 <div className="flex flex-col items-center">
                                     <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin mb-3"></div>
@@ -199,11 +250,38 @@ export default function DashboardPage() {
                                 <div className="absolute inset-0 w-full h-full group">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img src={imageUrl} alt="Lembrança do Dashboard" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
-                                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm shadow-xl flex items-center justify-center mb-2">
-                                            <UploadCloud className="w-5 h-5 text-white" />
+                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-3">
+                                        <div className="flex items-center gap-3">
+                                            {!isDeleteConfirm ? (
+                                                <button
+                                                    onClick={handleRemoveImage}
+                                                    className="w-10 h-10 rounded-full bg-red-500/20 hover:bg-red-500/40 backdrop-blur-sm shadow-xl flex items-center justify-center transition-colors group/delete"
+                                                    title="Remover Foto"
+                                                >
+                                                    <Trash2 className="w-5 h-5 text-red-400 group-hover/delete:text-red-300" />
+                                                </button>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={confirmRemoveImage}
+                                                        className="w-10 h-10 rounded-full bg-emerald-500/40 hover:bg-emerald-500/60 backdrop-blur-sm shadow-xl flex items-center justify-center transition-colors group/confirm"
+                                                        title="Confirmar Remoção"
+                                                    >
+                                                        <Check className="w-5 h-5 text-emerald-100 group-hover/confirm:scale-110 transition-transform" />
+                                                    </button>
+                                                    <button
+                                                        onClick={cancelRemoveImage}
+                                                        className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-xl flex items-center justify-center transition-colors group/cancel"
+                                                        title="Cancelar"
+                                                    >
+                                                        <X className="w-5 h-5 text-white group-hover/cancel:scale-110 transition-transform" />
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
-                                        <span className="text-xs font-medium text-white shadow-sm">Alterar Foto</span>
+                                        <span className="text-xs font-medium text-white shadow-sm">
+                                            {isDeleteConfirm ? "Confirmar remoção?" : "Deseja remover a imagem?"}
+                                        </span>
                                     </div>
                                 </div>
                             ) : (
@@ -220,13 +298,14 @@ export default function DashboardPage() {
                                 </>
                             )}
                             <input
+                                ref={fileInputRef}
                                 type="file"
                                 className="hidden"
                                 accept="image/png, image/jpeg, image/gif, image/webp"
                                 onChange={handleFileSelection}
                                 disabled={uploading}
                             />
-                        </label>
+                        </div>
                     </div>
 
                 </div>
@@ -244,55 +323,16 @@ export default function DashboardPage() {
 
                 {/* ── PRÓXIMOS EVENTOS + NOTAS RECENTES ── */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {loading ? (
-                        <>
-                            <Skeleton className="h-[220px] rounded-xl" />
-                            <Skeleton className="h-[220px] rounded-xl" />
-                        </>
-                    ) : (
-                        <>
-                            <div className="rounded-xl border border-border bg-card-background p-5">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <Calendar className="w-4 h-4 text-primary" />
-                                    <h3 className="text-sm font-semibold text-white">Próximos Eventos</h3>
-                                </div>
-                                <div className="space-y-3">
-                                    {upcomingEvents.map((event) => (
-                                        <div key={event.title} className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <div className="flex items-center gap-1.5 text-muted">
-                                                    <Clock className="w-3 h-3" />
-                                                    <span className="text-xs font-mono">{event.time}</span>
-                                                </div>
-                                                <span className="text-sm text-white">{event.title}</span>
-                                            </div>
-                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${event.tagColor}`}>
-                                                {event.tag}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="rounded-xl border border-border bg-card-background p-5">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <FileEdit className="w-4 h-4 text-primary" />
-                                    <h3 className="text-sm font-semibold text-white">Notas Recentes</h3>
-                                </div>
-                                <div className="space-y-4">
-                                    {recentNotes.map((note) => (
-                                        <div key={note.title} className="flex items-start justify-between gap-4">
-                                            <div className="overflow-hidden">
-                                                <p className="text-sm font-medium text-white truncate">{note.title}</p>
-                                                <p className="text-xs text-muted truncate mt-0.5">{note.preview}</p>
-                                            </div>
-                                            <span className="text-xs text-muted shrink-0">{note.when}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </>
-                    )}
+                    <UpcomingEvents 
+                        userId={user?.uid || ""}
+                        events={upcomingEvents}
+                        loading={dataLoading}
+                        onUpdate={() => user?.uid && loadDashboardData(user.uid)}
+                    />
+                    <RecentNotes 
+                        notes={recentNotes}
+                        loading={dataLoading}
+                    />
                 </div>
 
             </div>
