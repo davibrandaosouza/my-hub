@@ -5,15 +5,15 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import {
     BookHeart, LayoutDashboard, FileText,
-    Timer, Tv, Film, MonitorPlay, Gamepad2, Guitar,
-    Settings, ChevronRight, ChevronDown, LogOut, RotateCcw,
-    GraduationCap, Code2
+    Timer, Tv, Film, MonitorPlay, Gamepad2,
+    Settings, ChevronRight, ChevronDown, LogOut, RotateCcw
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { logout } from "@/lib/firebase/auth"
 import { Modal } from "@/components/ui/modal"
 import { useToastContext } from "@/app/(hub)/layout"
+import { MyHubLogo } from "@/components/shared/MyHubLogo"
 
 // ── TIPOS ──────────────────────────────────────────
 type NavItem = {
@@ -50,14 +50,7 @@ const navGroups: NavGroup[] = [
             { label: "Rotinas", href: "/rotinas", icon: RotateCcw },
         ],
     },
-    {
-        title: "Estudos",
-        items: [
-            { label: "Guitarra", href: "/guitarra", icon: Guitar },
-            { label: "UFES", href: "/ufes", icon: GraduationCap },
-            { label: "Programação", href: "/programacao", icon: Code2 },
-        ],
-    },
+// Removed Estudos category
     {
         title: "Entretenimento",
         items: [
@@ -69,6 +62,8 @@ const navGroups: NavGroup[] = [
     },
 ]
 
+import { useSettings } from "@/hooks/useSettings"
+
 // ── COMPONENTE ──────────────────────────────────────
 export function Sidebar() {
     const pathname = usePathname()
@@ -77,6 +72,7 @@ export function Sidebar() {
     const [closedGroups, setClosedGroups] = useState<string[]>([])
     const [showLogoutModal, setShowLogoutModal] = useState(false)
     const toast = useToastContext()
+    const { settings } = useSettings()
 
     const toggleGroup = (title: string) => {
         setClosedGroups(prev =>
@@ -93,6 +89,7 @@ export function Sidebar() {
         router.push("/login")
     }
 
+
     return (
         <aside
             className={cn(
@@ -102,12 +99,18 @@ export function Sidebar() {
         >
             {/* ── TOPO: AVATAR + NOME ── */}
             <div className="flex items-center gap-3 px-4 py-5 border-b border-border">
-                <div className="shrink-0 w-9 h-9 rounded-full bg-linear-to-br from-primary to-primary-active flex items-center justify-center text-white font-bold text-sm">
-                    M
-                </div>
+                {settings.profile.avatarUrl ? (
+                    <img /* eslint-disable-line @next/next/no-img-element */ 
+                        src={settings.profile.avatarUrl} 
+                        alt="Avatar" 
+                        className="shrink-0 w-9 h-9 rounded-full object-cover bg-border"
+                    />
+                ) : (
+                    <MyHubLogo className="w-9 h-9 text-xs rounded-full shadow-none" />
+                )}
                 {!collapsed && (
                     <div className="overflow-hidden">
-                        <p className="text-sm font-semibold text-white truncate">MyHub</p>
+                        <p className="text-sm font-semibold text-foreground truncate">{settings.profile.displayName || "MyHub"}</p>
                         <p className="text-xs text-muted truncate">Painel Pessoal</p>
                     </div>
                 )}
@@ -116,7 +119,7 @@ export function Sidebar() {
             {/* ── BOTÃO COLAPSAR ── */}
             <button
                 onClick={() => setCollapsed(!collapsed)}
-                className="absolute -right-3 top-[62px] z-10 w-6 h-6 rounded-full bg-card-background border border-border flex items-center justify-center text-muted hover:text-white transition-colors"
+                className="absolute -right-3 top-[62px] z-10 w-6 h-6 rounded-full bg-card-background border border-border flex items-center justify-center text-muted hover:text-foreground transition-colors"
             >
                 <ChevronRight
                     className={cn("w-3 h-3 transition-transform duration-300", collapsed ? "" : "rotate-180")}
@@ -163,7 +166,7 @@ export function Sidebar() {
                                                     "flex items-center gap-3 mx-2 px-3 py-2 rounded-lg text-sm transition-all",
                                                     isActive
                                                         ? "bg-primary/20 text-primary font-medium"
-                                                        : "text-muted hover:bg-white/5 hover:text-white",
+                                                        : "text-muted hover:bg-foreground/5 hover:text-foreground",
                                                     collapsed && "justify-center px-2"
                                                 )}
                                                 title={collapsed ? item.label : undefined}
@@ -185,7 +188,7 @@ export function Sidebar() {
                 <Link
                     href="/configuracoes"
                     className={cn(
-                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted hover:bg-white/5 hover:text-white transition-all",
+                        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted hover:bg-foreground/5 hover:text-foreground transition-all",
                         collapsed && "justify-center"
                     )}
                     title={collapsed ? "Configurações" : undefined}
@@ -217,13 +220,13 @@ export function Sidebar() {
                     <div className="flex items-center gap-3 justify-end">
                         <button
                             onClick={() => setShowLogoutModal(false)}
-                            className="px-4 py-2 rounded-lg text-sm text-muted hover:text-white hover:bg-white/5 transition-colors"
+                            className="px-4 py-2 rounded-lg text-sm text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                         >
                             Cancelar
                         </button>
                         <button
                             onClick={handleLogout}
-                            className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-500/20 border border-red-500/30 hover:bg-red-500/30 transition-colors"
+                            className="px-4 py-2 rounded-lg text-sm font-medium text-red-500 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 transition-colors"
                         >
                             Sair
                         </button>

@@ -6,12 +6,23 @@ import { Star } from "lucide-react"
 type Props = {
     value: number | null
     onChange: (val: number | null) => void
+    min?: number
+    max?: number
+    step?: number
     className?: string
 }
 
-export function RatingSlider({ value, onChange, className }: Props) {
-    const percent = value !== null ? value / 10 : 0
-    const displayValue = value !== null ? value.toFixed(1).replace('.0', '') : "-"
+export function RatingSlider({ 
+    value, 
+    onChange, 
+    min = 0, 
+    max = 10, 
+    step = 0.5, 
+    className 
+}: Props) {
+    const range = max - min
+    const percent = value !== null ? (value - min) / range : 0
+
 
     return (
         <div className={cn("relative w-full h-12 rounded-full border border-white/10 bg-black/40 overflow-hidden select-none", className)}>
@@ -24,13 +35,13 @@ export function RatingSlider({ value, onChange, className }: Props) {
 
             <input 
                 type="range" 
-                min={0} 
-                max={10} 
-                step={0.5} 
-                value={value ?? 0}
+                min={min} 
+                max={max} 
+                step={step} 
+                value={value ?? min}
                 onChange={(e) => {
                     const val = parseFloat(e.target.value)
-                    onChange(val === 0 ? null : val)
+                    onChange(val)
                 }}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 m-0"
             />
@@ -48,11 +59,7 @@ export function RatingSlider({ value, onChange, className }: Props) {
                 style={{ 
                     left: `calc(4px + ${percent} * (100% - 48px))`
                 }}
-            >
-                <span className="font-bold text-sm tracking-tighter">
-                    {displayValue}
-                </span>
-            </div>
+            />
         </div>
     )
 }

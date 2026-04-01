@@ -118,7 +118,7 @@ export function DevocionalHoje({ date, onSaved }: Props) {
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                     <BookOpen className={cn("w-4 h-4", wasLate ? "text-amber-400" : "text-primary")} />
-                    <h3 className="text-sm font-semibold text-white">
+                    <h3 className="text-sm font-semibold text-foreground">
                         {wasLate ? "Devocional Atrasado" : "Devocional no Prazo"}
                     </h3>
                 </div>
@@ -133,7 +133,7 @@ export function DevocionalHoje({ date, onSaved }: Props) {
                 wasLate ? "bg-amber-500/10 border-amber-500/20" : "bg-primary/10 border-primary/20"
             )}>
                 <p className="text-xs text-muted mb-1">Leitura do dia</p>
-                <p className="text-base font-semibold text-white">
+                <p className="text-base font-semibold text-foreground">
                     {reading ?? "Nenhuma leitura disponível"}
                 </p>
             </div>

@@ -57,7 +57,7 @@ function getMonthPositions(weeks: ({ date: string; dayOfWeek: number } | null)[]
 }
 
 function getIntensity(count: number): string {
-    if (count === 0) return "bg-white/5"
+    if (count === 0) return "bg-foreground/5"
     if (count === 1) return "bg-primary/30"
     if (count === 2) return "bg-primary/55"
     if (count <= 4) return "bg-primary/75"
@@ -78,7 +78,7 @@ export function HabitHeatmap({ logs, year, totalCompleted }: Props) {
 
     return (
         <div className="rounded-xl border border-border bg-card-background p-5">
-            <p className="text-sm font-semibold text-white mb-4">
+            <p className="text-sm font-semibold text-foreground mb-4">
                 {totalCompleted} hábitos completos no último ano
             </p>
 

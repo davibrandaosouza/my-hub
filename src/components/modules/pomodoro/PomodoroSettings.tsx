@@ -25,7 +25,7 @@ export function PomodoroSettings({ onClose }: PomodoroSettingsProps) {
     }
 
     return (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div className="bg-card-background border border-border rounded-2xl p-4 space-y-4 animate-in fade-in zoom-in-95 duration-200 shadow-xl">
             <div className="grid grid-cols-3 items-center gap-4">
                 <div className="space-y-1.5">
                     <label className="text-[10px] uppercase tracking-wider text-muted font-semibold">Trabalho</label>
@@ -34,7 +34,7 @@ export function PomodoroSettings({ onClose }: PomodoroSettingsProps) {
                             type="number"
                             value={focus}
                             onChange={(e) => setFocus(Number(e.target.value))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-primary/50 transition-colors"
+                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-hidden focus:border-primary/50 transition-colors"
                         />
                         <span className="text-xs text-muted">min</span>
                     </div>
@@ -47,7 +47,7 @@ export function PomodoroSettings({ onClose }: PomodoroSettingsProps) {
                             type="number"
                             value={breakDuration}
                             onChange={(e) => setBreakDuration(Number(e.target.value))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-primary/50 transition-colors"
+                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-hidden focus:border-primary/50 transition-colors"
                         />
                         <span className="text-xs text-muted">min</span>
                     </div>
@@ -60,7 +60,7 @@ export function PomodoroSettings({ onClose }: PomodoroSettingsProps) {
                             type="number"
                             value={sessions}
                             onChange={(e) => setSessions(Number(e.target.value))}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-hidden focus:border-primary/50 transition-colors"
+                            className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-hidden focus:border-primary/50 transition-colors"
                         />
                     </div>
                 </div>

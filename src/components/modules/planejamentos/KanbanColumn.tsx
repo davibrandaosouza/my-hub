@@ -26,8 +26,8 @@ export function KanbanColumn({ id, label, cards, loading, onCardClick }: Props) 
                 }`}
         >
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-white">{label}</h3>
-                <span className="text-xs font-medium text-muted bg-white/5 px-2 py-0.5 rounded-full">
+                <h3 className="text-sm font-semibold text-foreground">{label}</h3>
+                <span className="text-xs font-medium text-muted bg-foreground/5 px-2 py-0.5 rounded-full">
                     {loading ? "—" : cards.length}
                 </span>
             </div>

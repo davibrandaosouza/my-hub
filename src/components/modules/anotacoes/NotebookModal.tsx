@@ -33,10 +33,10 @@ export function NotebookModal({ onClose, onSave }: Props) {
             <div className="w-full max-w-md mx-4 bg-card-background border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                    <h2 className="text-base font-semibold text-white">Novo Caderno</h2>
+                    <h2 className="text-base font-semibold text-foreground">Novo Caderno</h2>
                     <button
                         onClick={onClose}
-                        className="p-1.5 rounded-lg text-muted hover:text-white hover:bg-white/5 transition-colors"
+                        className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -62,7 +62,7 @@ export function NotebookModal({ onClose, onSave }: Props) {
                             onChange={e => setNome(e.target.value)}
                             placeholder="Meu caderno..."
                             autoFocus
-                            className="w-full bg-white/5 border border-border rounded-lg px-3 py-2.5 text-sm text-white placeholder-muted focus:outline-none focus:border-primary/50 transition-colors"
+                            className="w-full bg-foreground/5 border border-border rounded-lg px-3 py-2.5 text-sm text-foreground placeholder-muted focus:outline-none focus:border-primary/50 transition-colors"
                             onKeyDown={e => { if (e.key === "Enter") handleSave() }}
                         />
                     </div>
@@ -78,7 +78,7 @@ export function NotebookModal({ onClose, onSave }: Props) {
                                     className={`w-8 h-8 rounded-lg flex items-center justify-center text-base transition-all ${
                                         emoji === e
                                             ? "bg-primary/20 ring-2 ring-primary/50"
-                                            : "hover:bg-white/10"
+                                            : "hover:bg-foreground/10"
                                     }`}
                                 >
                                     {e}
@@ -109,7 +109,7 @@ export function NotebookModal({ onClose, onSave }: Props) {
                 <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border bg-white/2">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 rounded-lg text-sm text-muted hover:text-white hover:bg-white/5 transition-colors"
+                        className="px-4 py-2 rounded-lg text-sm text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                     >
                         Cancelar
                     </button>

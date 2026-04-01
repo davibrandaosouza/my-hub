@@ -4,9 +4,11 @@ import { usePomodoroStore } from "@/hooks/usePomodoroStore"
 import { Plus, Trash2, CheckCircle2, Circle } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { useAppEffects } from "@/hooks/useAppEffects"
 
 export function PomodoroTasks() {
     const { tasks, activeTaskId, addTask, removeTask, toggleTask, setActiveTask } = usePomodoroStore()
+    const { playSound } = useAppEffects()
     const [newTaskText, setNewTaskText] = useState("")
 
     const handleAddTask = (e: React.FormEvent) => {
@@ -19,9 +21,9 @@ export function PomodoroTasks() {
 
     return (
         <div className="flex flex-col h-full space-y-4">
-            <div className="flex items-center gap-2 px-1">
+            <div className="flex items-center gap-2 px-1 text-foreground">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Fila de Tarefas</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider">Fila de Tarefas</h3>
             </div>
 
             {/* Adicionar tarefa */}
@@ -31,7 +33,7 @@ export function PomodoroTasks() {
                     value={newTaskText}
                     onChange={(e) => setNewTaskText(e.target.value)}
                     placeholder="Adicionar tarefa..."
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-muted focus:outline-hidden focus:border-primary/50 transition-colors"
+                    className="flex-1 bg-foreground/5 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-hidden focus:border-primary/50 transition-colors"
                 />
                 <button
                     type="submit"
@@ -45,7 +47,7 @@ export function PomodoroTasks() {
             <div className="flex-1 space-y-2 overflow-y-auto pr-1 custom-scrollbar">
                 {tasks.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-10 text-center space-y-3 opacity-40">
-                        <div className="w-12 h-12 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full border-2 border-dashed border-border flex items-center justify-center">
                             <Plus className="w-5 h-5" />
                         </div>
                         <p className="text-xs text-muted max-w-[150px]">
@@ -63,18 +65,19 @@ export function PomodoroTasks() {
                                     "group relative flex items-center gap-3 p-4 rounded-2xl border transition-all cursor-pointer",
                                     isActive
                                         ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
-                                        : "bg-white/5 border-white/5 hover:border-white/10 hover:bg-white/[0.07]"
+                                        : "bg-foreground/5 border-border/10 hover:border-border/30 hover:bg-foreground/[0.07]"
                                 )}
                                 onClick={() => setActiveTask(task.id)}
                             >
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation()
+                                        if (!task.completed) playSound("success")
                                         toggleTask(task.id)
                                     }}
                                     className={cn(
                                         "shrink-0 transition-colors",
-                                        task.completed ? "text-primary" : "text-muted group-hover:text-white/60"
+                                        task.completed ? "text-muted" : "text-foreground group-hover:text-foreground/70"
                                     )}
                                 >
                                     {task.completed ? (
@@ -86,7 +89,7 @@ export function PomodoroTasks() {
 
                                 <span className={cn(
                                     "flex-1 text-sm transition-all",
-                                    task.completed ? "text-muted line-through" : "text-white/90",
+                                    task.completed ? "text-muted line-through" : "text-foreground",
                                     isActive && !task.completed && "font-medium"
                                 )}>
                                     {task.text}

@@ -157,7 +157,7 @@ export default function PlanejamentosPage() {
                                             "px-3 py-1 rounded-full text-xs font-medium transition-colors capitalize",
                                             categoriaFiltro === cat
                                                 ? "bg-primary text-white"
-                                                : "bg-white/5 text-muted hover:text-white"
+                                                : "bg-foreground/5 text-muted hover:text-foreground"
                                         )}
                                     >
                                         {cat === "todos" ? "Todos" : cat} ({count})
@@ -220,8 +220,8 @@ export default function PlanejamentosPage() {
 
                                 {/* Header da coluna */}
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-sm font-semibold text-white">{label}</h3>
-                                    <span className="text-xs font-medium text-muted bg-white/5 px-2 py-0.5 rounded-full">
+                                    <h3 className="text-sm font-semibold text-foreground">{label}</h3>
+                                    <span className="text-xs font-medium text-muted bg-foreground/5 px-2 py-0.5 rounded-full">
                                         {loading ? "—" : cards.length}
                                     </span>
                                 </div>

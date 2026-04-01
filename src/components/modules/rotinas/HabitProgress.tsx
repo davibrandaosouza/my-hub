@@ -11,11 +11,12 @@ interface Props {
     strongestHabit: { name: string; emoji: string } | null
     totalXpYear: number
     avgPerDay: number
+    showStreaks: boolean
 }
 
 export function HabitProgress({
     completed, total, streak, totalXp,
-    bestStreak, strongestHabit, totalXpYear, avgPerDay,
+    bestStreak, strongestHabit, totalXpYear, avgPerDay, showStreaks
 }: Props) {
     const pct = total === 0 ? 0 : Math.round((completed / total) * 100)
 
@@ -35,7 +36,7 @@ export function HabitProgress({
             {/* Progresso do dia */}
             <div>
                 <div className="flex items-center gap-2 mb-4">
-                    <span className="text-sm font-semibold text-white">Progresso de Hoje</span>
+                    <span className="text-sm font-semibold text-foreground">Progresso de Hoje</span>
                 </div>
                 <div className="flex flex-col items-center gap-3">
                     <div className="relative w-36 h-36 flex items-center justify-center">
@@ -59,7 +60,7 @@ export function HabitProgress({
                             />
                         </svg>
                         <div className="absolute flex flex-col items-center">
-                            <span className="text-3xl font-bold text-white">{pct}%</span>
+                            <span className="text-3xl font-bold text-foreground">{pct}%</span>
                         </div>
                     </div>
                     <p className="text-sm text-muted text-center">
@@ -71,30 +72,38 @@ export function HabitProgress({
             <div className="border-t border-border" />
 
             {/* Sequência atual */}
-            <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-                    <Flame className="w-5 h-5 text-orange-400" />
-                </div>
-                <div>
-                    <p className="text-base font-bold text-white">{streak} {streak === 1 ? "dia" : "dias"}</p>
-                    <p className="text-xs text-muted">Sequência atual</p>
-                </div>
-            </div>
+            {showStreaks && (
+                <>
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                            <Flame className="w-5 h-5 text-orange-400" />
+                        </div>
+                        <div>
+                            <p className="text-base font-bold text-foreground">{streak} {streak === 1 ? "dia" : "dias"}</p>
+                            <p className="text-xs text-muted">Sequência atual</p>
+                        </div>
+                    </div>
 
-            <div className="border-t border-border" />
+                    <div className="border-t border-border" />
+                </>
+            )}
 
             {/* Melhor sequência */}
-            <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
-                    <Trophy className="w-5 h-5 text-purple-400" />
-                </div>
-                <div>
-                    <p className="text-base font-bold text-white">{bestStreak} {bestStreak === 1 ? "dia" : "dias"}</p>
-                    <p className="text-xs text-muted">Melhor sequência</p>
-                </div>
-            </div>
+            {showStreaks && (
+                <>
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
+                            <Trophy className="w-5 h-5 text-purple-400" />
+                        </div>
+                        <div>
+                            <p className="text-base font-bold text-foreground">{bestStreak} {bestStreak === 1 ? "dia" : "dias"}</p>
+                            <p className="text-xs text-muted">Melhor sequência</p>
+                        </div>
+                    </div>
 
-            <div className="border-t border-border" />
+                    <div className="border-t border-border" />
+                </>
+            )}
 
             {/* Hábito mais forte */}
             <div className="flex items-center gap-3">
@@ -102,7 +111,7 @@ export function HabitProgress({
                     {strongestHabit ? strongestHabit.emoji : "🌱"}
                 </div>
                 <div className="overflow-hidden">
-                    <p className="text-base font-bold text-white truncate">
+                    <p className="text-base font-bold text-foreground truncate">
                         {strongestHabit ? strongestHabit.name : "Em progresso..."}
                     </p>
                     <p className="text-xs text-muted">
@@ -119,7 +128,7 @@ export function HabitProgress({
                     <span className="text-lg">⚡</span>
                 </div>
                 <div>
-                    <p className="text-base font-bold text-white">
+                    <p className="text-base font-bold text-foreground">
                         {totalXp} <span className="text-xs font-normal text-muted">hoje</span>
                         {" · "}
                         <span className="text-primary">{totalXpYear}</span>

@@ -57,20 +57,20 @@ export function DevocionalCalendar({ devocionais, selectedDate, onDateSelect }: 
             {/* Header do calendário */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                    <span className="text-sm flex items-center gap-2 font-semibold text-white">
+                    <span className="text-sm flex items-center gap-2 font-semibold text-foreground">
                         <Calendar className="w-4 h-4 text-primary" /> {MONTHS[month]} {year}
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
                     <button
                         onClick={prevMonth}
-                        className="w-7 h-7 rounded-md flex items-center justify-center text-muted hover:text-white hover:bg-white/5 transition-colors"
+                        className="w-7 h-7 rounded-md flex items-center justify-center text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                     >
                         <ChevronLeft className="w-4 h-4" />
                     </button>
                     <button
                         onClick={nextMonth}
-                        className="w-7 h-7 rounded-md flex items-center justify-center text-muted hover:text-white hover:bg-white/5 transition-colors"
+                        className="w-7 h-7 rounded-md flex items-center justify-center text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                     >
                         <ChevronRight className="w-4 h-4" />
                     </button>
@@ -111,8 +111,8 @@ export function DevocionalCalendar({ devocionais, selectedDate, onDateSelect }: 
                                 status === "late" && "bg-amber-500/20 hover:bg-amber-500/30",
                                 isSelected && !status && "bg-primary/20 ring-1 ring-primary",
                                 isSelected && status && "ring-2 ring-primary ring-offset-2 ring-offset-background z-10",
-                                todayDay && !status && !isSelected && "border border-primary/50 text-white font-bold",
-                                !status && !todayDay && !isSelected && "text-muted hover:bg-white/5",
+                                todayDay && !status && !isSelected && "border border-primary/50 text-foreground font-bold",
+                                !status && !todayDay && !isSelected && "text-muted hover:bg-foreground/5",
                             )}
                             title={status === "late" ? "Devocional Atrasado" : status === "ontime" ? "Devocional Concluído" : ""}
                         >

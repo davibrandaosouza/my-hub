@@ -28,20 +28,20 @@ export function MediaStatsBar<T extends string>({ options, counts, active, onCha
                             "relative flex flex-col p-4 rounded-xl border transition-all text-left overflow-hidden group",
                             isActive
                                 ? "border-primary/50 bg-primary/10 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
-                                : "border-border bg-card-background hover:border-white/10 hover:bg-white/5"
+                                : "border-border bg-card-background hover:border-border/80 hover:bg-foreground/5"
                         )}
                     >
                         <div className="flex items-center gap-3 mb-1">
                             <div className={cn(
                                 "p-2 rounded-lg transition-colors",
-                                isActive ? "bg-primary/20 text-primary" : "bg-white/5 text-muted group-hover:text-white"
+                                isActive ? "bg-primary/20 text-primary" : "bg-foreground/5 text-muted group-hover:text-foreground"
                             )}>
                                 <Icon className="w-4 h-4" />
                             </div>
                             
                             <span className={cn(
                                 "text-2xl font-bold transition-colors",
-                                isActive ? "text-white" : "text-muted group-hover:text-white"
+                                isActive ? "text-foreground" : "text-muted group-hover:text-foreground"
                             )}>
                                 {counts[key] ?? 0}
                             </span>
@@ -49,7 +49,7 @@ export function MediaStatsBar<T extends string>({ options, counts, active, onCha
                         
                         <span className={cn(
                             "text-xs font-medium mt-1 transition-colors",
-                            isActive ? "text-primary/80" : "text-muted group-hover:text-white/60"
+                            isActive ? "text-primary/80" : "text-muted group-hover:text-foreground/60"
                         )}>
                             {label}
                         </span>

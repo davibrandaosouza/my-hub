@@ -21,10 +21,19 @@
   --foreground: #ffffff;
   --border: #303036;
   --primary: #600dbf;
-  --primary-hover: #a655f8;
-  --primary-active: #8051ee;
+  --primary-hover: color-mix(in srgb, var(--primary) 70%, white);
+  --primary-active: color-mix(in srgb, var(--primary) 80%, black);
   --muted: #9ca3af;
-  --muted-foreground: #6b7280;
+  --muted-foreground: #4b5563;
+}
+
+:root[data-theme="light"] {
+  --background: #ffffff;
+  --card-background: #f8fafc;
+  --foreground: #020617;
+  --border: #cbd5e1;
+  --muted: #475569;
+  --muted-foreground: #94a3b8;
 }
 
 body {
@@ -62,7 +71,7 @@ body {
 .nota-editor h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--foreground);
   margin: 1.5rem 0 0.75rem;
   line-height: 1.2;
 }
@@ -70,7 +79,7 @@ body {
 .nota-editor h2 {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--foreground);
   margin: 1.25rem 0 0.6rem;
   line-height: 1.2;
 }
@@ -78,7 +87,7 @@ body {
 .nota-editor h3 {
   font-size: 1.15rem;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--muted);
   margin: 1rem 0 0.5rem;
   line-height: 1.2;
 }
@@ -111,7 +120,7 @@ body {
   padding: 0.75rem 1rem;
   margin: 1rem 0;
   border-radius: 0 0.5rem 0.5rem 0;
-  color: #e2e8f0;
+  color: var(--foreground);
 }
 
 /* Interactive Task Point */

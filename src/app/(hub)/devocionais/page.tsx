@@ -79,17 +79,17 @@ export default function DevocionalPage() {
                             <Flame className="w-6 h-6 text-red-400" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-white">{streak} dias</p>
+                            <p className="text-2xl font-bold text-foreground">{streak} dias</p>
                             <p className="text-sm text-muted">Sequência atual de devocionais</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-8 text-center">
                         <div>
-                            <p className="text-2xl font-bold text-white">{totalThisMonth}</p>
+                            <p className="text-2xl font-bold text-foreground">{totalThisMonth}</p>
                             <p className="text-xs text-muted uppercase tracking-wider">Este mês</p>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-white">{total}</p>
+                            <p className="text-2xl font-bold text-foreground">{total}</p>
                             <p className="text-xs text-muted uppercase tracking-wider">Total</p>
                         </div>
                     </div>
@@ -157,7 +157,7 @@ export default function DevocionalPage() {
 
                 {/* ── HEATMAP ANUAL ── */}
                 <div className="rounded-xl border border-border bg-card-background p-5">
-                    <p className="text-sm font-semibold text-white mb-4">
+                    <p className="text-sm font-semibold text-foreground mb-4">
                         {total} devocionais completos em {currentYear}
                     </p>
                     <DevocionalHeatmap devocionais={allYear} year={currentYear} />

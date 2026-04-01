@@ -29,7 +29,7 @@ export function HabitItem({ habit, log, onToggle, onDelete }: Props) {
                 flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all duration-200 group
                 ${completed
                     ? "border-primary/30 bg-primary/5"
-                    : "border-border bg-card-background hover:border-border/80 hover:bg-white/2"
+                    : "border-border bg-card-background hover:border-border/80 hover:bg-foreground/2"
                 }
             `}
         >
@@ -67,7 +67,7 @@ export function HabitItem({ habit, log, onToggle, onDelete }: Props) {
             <span className="text-xl select-none">{habit.emoji}</span>
 
             {/* Nome */}
-            <span className={`flex-1 text-sm font-medium transition-all duration-200 ${completed ? "line-through text-muted" : "text-white"}`}>
+            <span className={`flex-1 text-sm font-medium transition-all duration-200 ${completed ? "line-through text-muted" : "text-foreground"}`}>
                 {habit.name}
             </span>
 
@@ -82,7 +82,7 @@ export function HabitItem({ habit, log, onToggle, onDelete }: Props) {
                     <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-200">
                         <button
                             onClick={() => setShowConfirm(false)}
-                            className="text-[10px] font-bold text-muted hover:text-white uppercase tracking-wider"
+                            className="text-[10px] font-bold text-muted hover:text-foreground uppercase tracking-wider"
                         >
                             Não
                         </button>

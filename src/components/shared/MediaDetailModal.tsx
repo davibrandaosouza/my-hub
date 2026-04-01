@@ -4,7 +4,7 @@
 import { useState } from "react"
 import { X, Star, Tag, Trash2, Save } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { RatingSlider } from "@/components/shared/RatingSlider"
+import { RatingInput } from "@/components/shared/RatingInput"
 
 export type DetailModalData<TStatus extends string> = {
     id: string
@@ -61,10 +61,10 @@ export function MediaDetailModal<TStatus extends string>({
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-xl rounded-2xl border border-white/10 bg-card-background shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                className="w-full max-w-xl rounded-2xl border border-border bg-card-background shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
             >
                 {/* Header Cover */}
-                <div className="relative h-64 sm:h-80 w-full bg-white/5">
+                <div className="relative h-64 sm:h-80 w-full bg-foreground/5">
                     {data.coverUrl ? (
                         <img
                             src={data.coverUrl}
@@ -106,7 +106,7 @@ export function MediaDetailModal<TStatus extends string>({
                             <Star className="w-4 h-4 text-yellow-500" /> Minha Nota
                         </label>
 
-                        <RatingSlider
+                        <RatingInput
                             value={notaInput}
                             onChange={setNotaInput}
                         />
@@ -120,7 +120,7 @@ export function MediaDetailModal<TStatus extends string>({
                                         "px-2 py-2.5 rounded-xl text-[13px] transition-colors border outline-none w-full flex items-center justify-center",
                                         statusInput === opt.value
                                             ? opt.color
-                                            : "bg-transparent text-white/50 border-white/10 hover:bg-white/5 hover:text-white/80 font-normal"
+                                            : "bg-transparent text-muted border-border hover:bg-white/5 hover:text-foreground font-normal"
                                     )}
                                 >
                                     {opt.label}

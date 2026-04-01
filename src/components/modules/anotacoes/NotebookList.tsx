@@ -79,7 +79,7 @@ export function NotebookList({
                         placeholder="Buscar notas..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
-                        className="w-full bg-transparent pl-7 pr-3 py-1 text-sm text-white placeholder-muted/50 focus:outline-none transition-colors font-medium"
+                        className="w-full bg-transparent pl-7 pr-3 py-1 text-sm text-foreground placeholder-muted/50 focus:outline-none transition-colors font-medium"
                     />
                 </div>
             </div>
@@ -116,7 +116,7 @@ export function NotebookList({
                             <div key={nb.id}>
                                 {/* Notebook header */}
                                 <div
-                                    className="group flex items-center gap-1 mx-2 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-white/5 transition-colors"
+                                    className="group flex items-center gap-1 mx-2 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-foreground/5 transition-colors"
                                     onMouseEnter={() => setHoveredNotebook(nb.id)}
                                     onMouseLeave={() => setHoveredNotebook(null)}
                                 >
@@ -148,7 +148,7 @@ export function NotebookList({
                                     )}>
                                         <button
                                             onClick={() => onNewNote(nb.id)}
-                                            className="p-1 rounded hover:bg-white/10 text-muted hover:text-white transition-colors"
+                                            className="p-1 rounded hover:bg-foreground/10 text-muted hover:text-foreground transition-colors"
                                             title="Nova nota"
                                         >
                                             <Plus className="w-3 h-3" />
@@ -169,7 +169,7 @@ export function NotebookList({
                                         {nbNotes.length === 0 ? (
                                             <div
                                                 onClick={() => onNewNote(nb.id)}
-                                                className="group flex items-center gap-1.5 mx-2 px-2 py-2 rounded-lg cursor-pointer text-[11px] text-muted hover:text-white hover:bg-white/5 transition-colors"
+                                                className="group flex items-center gap-1.5 mx-2 px-2 py-2 rounded-lg cursor-pointer text-[11px] text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                                             >
                                                 <Plus className="w-3 h-3" />
                                                 Nova nota
@@ -199,7 +199,7 @@ export function NotebookList({
                 {notebooks.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                         <Notebook className="w-8 h-8 text-muted mb-3" />
-                        <p className="text-xs font-medium text-white mb-1">Nenhum caderno</p>
+                        <p className="text-xs font-medium text-foreground mb-1">Nenhum caderno</p>
                         <p className="text-[11px] text-muted">Crie um caderno para começar</p>
                     </div>
                 )}
@@ -250,7 +250,7 @@ function NoteItem({
                 "group relative flex items-start gap-2 mx-2 px-2 py-2 rounded-lg cursor-pointer transition-all",
                 isSelected
                     ? "bg-primary/15 border border-primary/20"
-                    : "hover:bg-white/5 border border-transparent"
+                    : "hover:bg-foreground/5 border border-transparent"
             )}
             onClick={onSelect}
             onMouseEnter={() => onHover(note.id)}
@@ -258,7 +258,7 @@ function NoteItem({
         >
             <FileText className={cn("w-3.5 h-3.5 mt-0.5 shrink-0", isSelected ? "text-primary" : "text-muted")} />
             <div className="flex-1 min-w-0">
-                <p className={cn("text-xs font-medium truncate", isSelected ? "text-primary" : "text-white")}>
+                <p className={cn("text-xs font-medium truncate", isSelected ? "text-primary" : "text-foreground")}>
                     {note.titulo || "Sem título"}
                 </p>
                 <div className="flex items-center gap-1.5 mt-0.5">

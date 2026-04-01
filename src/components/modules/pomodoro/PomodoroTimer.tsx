@@ -67,7 +67,7 @@ export function PomodoroTimer() {
                         cx="160"
                         cy="160"
                         r="140"
-                        className="stroke-white/5 fill-none"
+                        className="stroke-foreground/5 fill-none"
                         strokeWidth="8"
                     />
                     {/* Circulo de progresso */}
@@ -87,8 +87,8 @@ export function PomodoroTimer() {
                 </svg>
 
                 {/* Exibição do tempo */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-6xl font-bold tracking-tighter text-white tabular-nums">
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-foreground">
+                    <span className="text-6xl font-bold tracking-tighter tabular-nums">
                         {formatTime(timeLeft)}
                     </span>
                     <span className="text-sm text-muted mt-1 font-medium">
@@ -102,7 +102,7 @@ export function PomodoroTimer() {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={resetTimer}
-                        className="p-3 rounded-2xl bg-white/5 text-muted hover:text-white transition-colors"
+                        className="p-3 rounded-2xl bg-foreground/5 text-muted hover:text-foreground transition-colors"
                         title="Reiniciar"
                     >
                         <RotateCcw className="w-5 h-5" />
@@ -113,7 +113,7 @@ export function PomodoroTimer() {
                         className={cn(
                             "flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg active:scale-95",
                             status === "running"
-                                ? "bg-white/10 text-white hover:bg-white/20"
+                                ? "bg-foreground/10 text-foreground hover:bg-foreground/20"
                                 : "bg-primary text-white hover:bg-primary-active shadow-primary/20"
                         )}
                     >
@@ -132,7 +132,7 @@ export function PomodoroTimer() {
 
                     <button
                         onClick={skipSession}
-                        className="p-3 rounded-2xl bg-white/5 text-muted hover:text-white transition-colors"
+                        className="p-3 rounded-2xl bg-foreground/5 text-muted hover:text-foreground transition-colors"
                         title="Pular"
                     >
                         <SkipForward className="w-5 h-5" />
@@ -142,7 +142,7 @@ export function PomodoroTimer() {
                 {/* Botão de configurações */}
                 <button
                     onClick={() => setShowSettings(!showSettings)}
-                    className="flex items-center gap-2 text-xs text-muted hover:text-white transition-colors group"
+                    className="flex items-center gap-2 text-xs text-muted hover:text-foreground transition-colors group"
                 >
                     <SettingsIcon className="w-4 h-4 group-hover:rotate-90 transition-transform" />
                     <span>Ajustar timer</span>

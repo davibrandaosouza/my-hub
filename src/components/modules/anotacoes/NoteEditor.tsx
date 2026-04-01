@@ -259,7 +259,7 @@ export function NoteEditor({ note, onSave }: Props) {
                             onClick={() => setIsReadOnly(!isReadOnly)}
                             className={cn(
                                 "p-2 rounded-xl transition-all",
-                                isReadOnly ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted hover:text-white hover:bg-white/5"
+                                isReadOnly ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-muted hover:text-foreground hover:bg-foreground/5"
                             )}
                             title={isReadOnly ? "Voltar a Editar" : "Visualizar (Read Mode)"}
                         >
@@ -277,7 +277,7 @@ export function NoteEditor({ note, onSave }: Props) {
                     <div className="relative">
                         <button
                             onClick={() => { setShowFontPicker(!showFontPicker); setShowSizePicker(false); setShowColorPicker(false) }}
-                            className="flex items-center gap-1 px-2 py-1.5 rounded text-xs text-muted hover:text-white hover:bg-white/10 transition-colors min-w-[70px]"
+                            className="flex items-center gap-1 px-2 py-1.5 rounded text-xs text-muted hover:text-foreground hover:bg-foreground/10 transition-colors min-w-[70px]"
                             title="Fonte"
                         >
                             <span className="truncate max-w-[60px]">{FONT_FAMILIES.find(f => f.value === fontFamily)?.label ?? "Fonte"}</span>
@@ -290,8 +290,8 @@ export function NoteEditor({ note, onSave }: Props) {
                                         key={f.value}
                                         onClick={() => applyFontFamily(f.value)}
                                         className={cn(
-                                            "w-full text-left px-3 py-2 text-xs transition-colors hover:bg-white/10",
-                                            fontFamily === f.value ? "text-primary font-semibold" : "text-muted hover:text-white"
+                                            "w-full text-left px-3 py-2 text-xs transition-colors hover:bg-foreground/10",
+                                            fontFamily === f.value ? "text-primary font-semibold" : "text-muted hover:text-foreground"
                                         )}
                                         style={{ fontFamily: f.value }}
                                     >
@@ -306,7 +306,7 @@ export function NoteEditor({ note, onSave }: Props) {
                     <div className="relative">
                         <button
                             onClick={() => { setShowSizePicker(!showSizePicker); setShowFontPicker(false); setShowColorPicker(false) }}
-                            className="flex items-center gap-1 px-2 py-1.5 rounded text-xs text-muted hover:text-white hover:bg-white/10 transition-colors"
+                            className="flex items-center gap-1 px-2 py-1.5 rounded text-xs text-muted hover:text-foreground hover:bg-foreground/10 transition-colors"
                             title="Tamanho"
                         >
                             <span>{fontSize}px</span>
@@ -319,8 +319,8 @@ export function NoteEditor({ note, onSave }: Props) {
                                         key={s}
                                         onClick={() => applyFontSize(s)}
                                         className={cn(
-                                            "w-full text-left px-3 py-1.5 text-xs transition-colors hover:bg-white/10",
-                                            fontSize === s ? "text-primary font-semibold" : "text-muted hover:text-white"
+                                            "w-full text-left px-3 py-1.5 text-xs transition-colors hover:bg-foreground/10",
+                                            fontSize === s ? "text-primary font-semibold" : "text-muted hover:text-foreground"
                                         )}
                                     >
                                         {s}px
@@ -334,7 +334,7 @@ export function NoteEditor({ note, onSave }: Props) {
                     <div className="relative">
                         <button
                             onClick={() => { setShowColorPicker(!showColorPicker); setShowFontPicker(false); setShowSizePicker(false) }}
-                            className="flex items-center gap-1 px-2 py-1.5 rounded text-xs text-muted hover:text-white hover:bg-white/10 transition-colors"
+                            className="flex items-center gap-1 px-2 py-1.5 rounded text-xs text-muted hover:text-foreground hover:bg-foreground/10 transition-colors"
                             title="Cor do texto"
                         >
                             <div className="flex flex-col items-center">
@@ -407,7 +407,7 @@ export function NoteEditor({ note, onSave }: Props) {
                     suppressContentEditableWarning
                     onInput={handleEditorInput}
                     className={cn(
-                        "nota-editor h-full min-h-full p-6 outline-none text-white leading-relaxed",
+                        "nota-editor h-full min-h-full p-6 outline-none text-foreground leading-relaxed",
                         isReadOnly ? "cursor-default" : "cursor-text"
                     )}
                     style={{ fontFamily, fontSize: `${fontSize}px` }}
@@ -448,7 +448,7 @@ function ToolbarBtn({
                 "flex items-center justify-center w-7 h-7 rounded transition-all",
                 active
                     ? "text-primary bg-primary/20 font-bold"
-                    : "text-muted hover:text-white hover:bg-white/10",
+                    : "text-muted hover:text-foreground hover:bg-foreground/10",
                 className
             )}
         >

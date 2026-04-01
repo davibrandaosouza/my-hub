@@ -32,7 +32,7 @@ export function RecentNotes({ notes, loading }: Props) {
         <div className="rounded-xl border border-border bg-card-background p-5 h-[280px] flex flex-col">
             <div className="flex items-center gap-2 mb-4 shrink-0">
                 <FileEdit className="w-4 h-4 text-primary" />
-                <h3 className="text-sm font-semibold text-white">Notas Recentes</h3>
+                <h3 className="text-sm font-semibold text-foreground">Notas Recentes</h3>
             </div>
             
             <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar flex flex-col">
@@ -62,7 +62,7 @@ export function RecentNotes({ notes, loading }: Props) {
                             className="flex items-start justify-between gap-4 group"
                         >
                             <div className="overflow-hidden flex-1">
-                                <p className="text-sm font-medium text-white truncate group-hover:text-primary transition-colors">
+                                <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
                                     {note.titulo || "Sem Título"}
                                 </p>
                                 <p className="text-xs text-muted truncate mt-0.5 opacity-70">

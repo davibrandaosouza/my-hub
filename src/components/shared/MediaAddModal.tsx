@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Search, X, Check, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { RatingSlider } from "@/components/shared/RatingSlider"
+import { RatingInput } from "@/components/shared/RatingInput"
 
 export type MediaSearchResult = {
     apiId: string
@@ -116,10 +116,10 @@ export function MediaAddModal<TStatus extends string>({
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-border">
-                    <h2 className="text-base font-semibold text-white">{title}</h2>
+                    <h2 className="text-base font-semibold text-foreground">{title}</h2>
                     <button
                         onClick={() => { reset(); onClose() }}
-                        className="p-1.5 rounded-lg text-muted hover:text-white hover:bg-white/5 transition-colors"
+                        className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -139,7 +139,7 @@ export function MediaAddModal<TStatus extends string>({
                                     if (selected) setSelected(null)
                                 }}
                                 placeholder={searchPlaceholder}
-                                className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-background border border-border text-sm text-white placeholder:text-muted focus:outline-none focus:border-primary/50 transition-colors"
+                                className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-background border border-border text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary/50 transition-colors"
                             />
                             {searching && (
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -164,10 +164,10 @@ export function MediaAddModal<TStatus extends string>({
                                                 className="w-10 h-10 rounded-md object-cover shrink-0"
                                             />
                                         ) : (
-                                            <div className="w-10 h-10 rounded-md bg-white/5 flex items-center justify-center shrink-0 text-base">{fallbackIcon}</div>
+                                            <div className="w-10 h-10 rounded-md bg-foreground/5 flex items-center justify-center shrink-0 text-base">{fallbackIcon}</div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm text-white truncate">{item.titulo}</p>
+                                            <p className="text-sm text-foreground truncate">{item.titulo}</p>
                                             <p className="text-[11px] text-muted">{item.categoria}</p>
                                         </div>
                                     </button>
@@ -181,7 +181,7 @@ export function MediaAddModal<TStatus extends string>({
                                 {selected.coverUrl && (
                                     <img src={selected.coverUrl} alt={selected.titulo} className="w-10 h-10 rounded-md object-cover shrink-0" />
                                 )}
-                                <p className="text-sm text-white flex-1 truncate">{selected.titulo}</p>
+                                <p className="text-sm text-foreground flex-1 truncate">{selected.titulo}</p>
                                 <Check className="w-4 h-4 text-primary shrink-0" />
                             </div>
                         )}
@@ -199,7 +199,7 @@ export function MediaAddModal<TStatus extends string>({
                                         "px-3 py-2 rounded-lg text-xs font-medium border transition-all",
                                         status === opt.value
                                             ? opt.color
-                                            : "border-border text-muted hover:text-white hover:bg-white/5"
+                                            : "border-border text-muted hover:text-foreground hover:bg-foreground/5"
                                     )}
                                 >
                                     {opt.label}
@@ -215,7 +215,7 @@ export function MediaAddModal<TStatus extends string>({
                             <span>Avaliação (Deslize para dar uma nota)</span>
                             <span className="text-muted/50 font-normal ml-1">— opcional</span>
                         </label>
-                        <RatingSlider
+                        <RatingInput
                             value={nota}
                             onChange={setNota}
                         />
@@ -226,7 +226,7 @@ export function MediaAddModal<TStatus extends string>({
                 <div className="flex gap-3 px-5 pb-5 pt-3 border-t border-border mt-auto">
                     <button
                         onClick={() => { reset(); onClose() }}
-                        className="flex-1 py-2.5 rounded-lg border border-border text-sm text-muted hover:text-white hover:bg-white/5 transition-colors"
+                        className="flex-1 py-2.5 rounded-lg border border-border text-sm text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                     >
                         Cancelar
                     </button>

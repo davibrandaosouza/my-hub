@@ -14,7 +14,7 @@ export function EmptyState({ hasNotebooks, onNewNotebook, onNewNote }: Props) {
             <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
                 <BookOpen className="w-9 h-9 text-primary/60" />
             </div>
-            <h2 className="text-xl font-semibold text-white mb-2">
+            <h2 className="text-xl font-semibold text-foreground mb-2">
                 {hasNotebooks ? "Selecione uma nota" : "Seu espaço de ideias"}
             </h2>
             <p className="text-sm text-muted max-w-xs mb-6">

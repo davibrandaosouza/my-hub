@@ -156,7 +156,7 @@ export default function AnimesPage() {
                     {loading ? (
                         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                             {[...Array(5)].map((_, i) => (
-                                <Skeleton key={i} className="h-[90px] rounded-xl bg-white/5" />
+                                <Skeleton key={i} className="h-[90px] rounded-xl bg-foreground/5" />
                             ))}
                         </div>
                     ) : (
@@ -175,7 +175,7 @@ export default function AnimesPage() {
                                 value={busca}
                                 onChange={(e) => setBusca(e.target.value)}
                                 placeholder="Buscar nos seus animes..."
-                                className="w-full pl-10 pr-4 py-3 rounded-xl bg-card-background border border-border text-sm text-white placeholder:text-muted focus:outline-none focus:border-primary/50 transition-colors shadow-sm"
+                                className="w-full pl-10 pr-4 py-3 rounded-xl bg-card-background border border-border text-sm text-foreground placeholder:text-muted focus:outline-none focus:border-primary/50 transition-colors shadow-sm"
                             />
                         </div>
 
@@ -192,7 +192,7 @@ export default function AnimesPage() {
                     {loading ? (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
                             {[...Array(10)].map((_, i) => (
-                                <Skeleton key={i} className="aspect-3/4 rounded-xl bg-white/5" />
+                                <Skeleton key={i} className="aspect-3/4 rounded-xl bg-foreground/5" />
                             ))}
                         </div>
                     ) : filtrados.length > 0 ? (
@@ -220,7 +220,7 @@ export default function AnimesPage() {
                     ) : (
                         <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-dashed border-border bg-card-background/50">
                             <span className="text-6xl mb-4 opacity-50">🍿</span>
-                            <h3 className="text-lg font-bold text-white mb-2">
+                            <h3 className="text-lg font-bold text-foreground mb-2">
                                 {busca ? "Nenhum anime encontrado" : "Sua coleção está vazia"}
                             </h3>
                             <p className="text-sm text-muted max-w-sm mb-6">

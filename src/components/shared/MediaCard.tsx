@@ -3,6 +3,8 @@
 
 import { Star, Tag } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useSettings } from "@/hooks/useSettings"
+import { getFormattedRating } from "@/lib/utils/ratings"
 
 export type MediaData = {
     id: string
@@ -27,7 +29,7 @@ export function MediaCard({ data, onClick, fallbackIcon = "🎮" }: Props) {
             className="group relative flex flex-col h-full rounded-xl overflow-hidden border border-border bg-card-background cursor-pointer hover:border-primary/40 transition-all hover:scale-[1.02] hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)]"
         >
             {/* Capa */}
-            <div className="relative aspect-3/4 overflow-hidden bg-white/5 shrink-0">
+            <div className="relative aspect-3/4 overflow-hidden bg-foreground/5 shrink-0">
                 {data.imagemUrl ? (
                     <img
                         src={data.imagemUrl}
@@ -54,24 +56,53 @@ export function MediaCard({ data, onClick, fallbackIcon = "🎮" }: Props) {
 
             {/* Info */}
             <div className="flex flex-col flex-1 p-3">
-                <p className="text-sm font-semibold text-white leading-snug line-clamp-2">
+                <p className="text-sm font-semibold text-foreground leading-snug line-clamp-2">
                     {data.titulo}
                 </p>
 
                 <div className="mt-auto pt-2 flex items-end justify-between gap-2">
-                    <span className="flex items-center gap-1 text-[10px] text-muted bg-white/5 px-2 py-0.5 rounded-full border border-border truncate max-w-[70%]">
+                    <span className="flex items-center gap-1 text-[10px] text-muted bg-foreground/5 px-2 py-0.5 rounded-full border border-border truncate max-w-[70%]">
                         <Tag className="w-2.5 h-2.5 shrink-0" />
                         {data.categoria}
                     </span>
 
                     {data.nota !== null && (
-                        <span className="flex items-center gap-0.5 text-xs font-bold text-yellow-400">
-                            <Star className="w-3 h-3 fill-yellow-400" />
-                            {data.nota.toFixed(1)}
-                        </span>
+                        <RatingDisplay value={data.nota} />
                     )}
                 </div>
             </div>
         </div>
+    )
+}
+
+function RatingDisplay({ value }: { value: number }) {
+    const { settings } = useSettings()
+    const format = settings.entertainment.ratingFormat
+    const mapped = getFormattedRating(value, format)
+
+    if (format === "stars") {
+        return (
+            <span className="flex items-center gap-0.5 text-xs font-bold text-yellow-400">
+                <Star className="w-3.5 h-3.5 fill-yellow-400" />
+                {mapped}
+            </span>
+        )
+    }
+
+    if (format === "emojis") {
+        return (
+            <span className="text-lg leading-none">
+                {mapped === "sad" && "🙁"}
+                {mapped === "neutral" && "😐"}
+                {mapped === "happy" && "😊"}
+            </span>
+        )
+    }
+
+    return (
+        <span className="flex items-center gap-0.5 text-xs font-bold text-yellow-400">
+            <Star className="w-3 h-3 fill-yellow-400" />
+            {mapped}
+        </span>
     )
 }

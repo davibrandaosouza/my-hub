@@ -6,10 +6,8 @@ import { Header } from "@/components/layout/Header"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
     FileText, Timer, Tv, Film,
-    MonitorPlay, Gamepad2, Guitar, RotateCcw,
+    MonitorPlay, Gamepad2, RotateCcw,
     BookHeart, Kanban,
-    GraduationCap,
-    Code2,
     UploadCloud
 } from "lucide-react"
 import Link from "next/link"
@@ -25,6 +23,7 @@ import type { Note } from "@/types/anotacao"
 import type { DashboardEvent } from "@/types/dashboard"
 import { RecentNotes } from "@/components/modules/dashboard/RecentNotes"
 import { UpcomingEvents } from "@/components/modules/dashboard/UpcomingEvents"
+import { useSettings } from "@/hooks/useSettings"
 
 const quickAccessItems = [
     { label: "Devocionais", description: "Ver devocional", href: "/devocionais", icon: BookHeart },
@@ -32,9 +31,6 @@ const quickAccessItems = [
     { label: "Anotações", description: "Ver notas", href: "/anotacoes", icon: FileText },
     { label: "Pomodoro", description: "Iniciar sessão", href: "/pomodoro", icon: Timer },
     { label: "Rotinas", description: "Ver hoje", href: "/rotinas", icon: RotateCcw },
-    { label: "Guitarra", description: "Praticar", href: "/guitarra", icon: Guitar },
-    { label: "UFES", description: "Ver matérias", href: "/ufes", icon: GraduationCap },
-    { label: "Programação", description: "Estudar", href: "/programacao", icon: Code2 },
     { label: "Animes", description: "Ver lista", href: "/animes", icon: Tv },
     { label: "Filmes", description: "Ver lista", href: "/filmes", icon: Film },
     { label: "Séries", description: "Ver lista", href: "/series", icon: MonitorPlay },
@@ -56,7 +52,8 @@ export default function DashboardPage() {
     const toast = useToastContext()
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const firstName = user?.displayName?.split(" ")[0] ?? "de volta"
+    const { settings } = useSettings()
+    const firstName = settings.profile.displayName?.split(" ")[0] || "Usuário"
 
     const loadDashboardData = async (uid: string) => {
         try {
@@ -187,7 +184,7 @@ export default function DashboardPage() {
                     <Skeleton className="h-[88px] w-full rounded-xl" />
                 ) : (
                     <div className="rounded-xl bg-linear-to-r from-primary/20 to-primary-active/10 border border-primary/20 p-6">
-                        <h2 className="text-xl font-bold text-white mb-1">
+                        <h2 className="text-xl font-bold text-foreground mb-1">
                             Bem-vindo de volta, {firstName}! 👋
                         </h2>
                         <p className="text-sm text-muted italic">
@@ -221,7 +218,7 @@ export default function DashboardPage() {
                                             className="rounded-xl border border-border bg-card-background p-4 hover:border-primary/40 hover:bg-primary/5 transition-all group"
                                         >
                                             <Icon className="w-5 h-5 text-primary mb-3" />
-                                            <p className="text-sm font-medium text-white group-hover:text-primary transition-colors">
+                                            <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                                                 {item.label}
                                             </p>
                                             <p className="text-xs text-muted mt-0.5">{item.description}</p>
@@ -244,7 +241,7 @@ export default function DashboardPage() {
                             {uploading ? (
                                 <div className="flex flex-col items-center">
                                     <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin mb-3"></div>
-                                    <p className="text-sm font-medium text-white">Salvando...</p>
+                                    <p className="text-sm font-medium text-foreground">Salvando...</p>
                                 </div>
                             ) : imageUrl ? (
                                 <div className="absolute inset-0 w-full h-full group">
@@ -274,12 +271,12 @@ export default function DashboardPage() {
                                                         className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm shadow-xl flex items-center justify-center transition-colors group/cancel"
                                                         title="Cancelar"
                                                     >
-                                                        <X className="w-5 h-5 text-white group-hover/cancel:scale-110 transition-transform" />
+                                                        <X className="w-5 h-5 text-foreground group-hover/cancel:scale-110 transition-transform" />
                                                     </button>
                                                 </>
                                             )}
                                         </div>
-                                        <span className="text-xs font-medium text-white shadow-sm">
+                                        <span className="text-xs font-medium text-foreground shadow-sm">
                                             {isDeleteConfirm ? "Confirmar remoção?" : "Deseja remover a imagem?"}
                                         </span>
                                     </div>
@@ -289,7 +286,7 @@ export default function DashboardPage() {
                                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary/20 transition-all">
                                         <UploadCloud className="w-6 h-6 text-primary" />
                                     </div>
-                                    <h3 className="text-sm font-semibold text-white mb-2 text-center text-balance">
+                                    <h3 className="text-sm font-semibold text-foreground mb-2 text-center text-balance">
                                         Adicionar Imagem
                                     </h3>
                                     <p className="text-[11px] text-muted text-center max-w-[150px]">

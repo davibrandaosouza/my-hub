@@ -91,7 +91,7 @@ export function DevocionalHistorico({ devocionais, onUpdated }: Props) {
     return (
         <>
             <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-white">Histórico</h3>
+                <h3 className="text-sm font-semibold text-foreground">Histórico</h3>
 
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted" />
@@ -114,10 +114,10 @@ export function DevocionalHistorico({ devocionais, onUpdated }: Props) {
                             <button
                                 key={d.id}
                                 onClick={() => handleOpen(d)}
-                                className="w-full flex items-start justify-between gap-2 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group text-left"
+                                className="w-full flex items-start justify-between gap-2 p-3 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer group text-left"
                             >
                                 <div className="overflow-hidden">
-                                    <p className="text-sm font-medium text-white truncate group-hover:text-primary transition-colors">
+                                    <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
                                         {d.reading}
                                     </p>
                                     {d.reflection && (
@@ -160,7 +160,7 @@ export function DevocionalHistorico({ devocionais, onUpdated }: Props) {
                                 </span>
                             </div>
                             <div className="rounded-lg bg-primary/10 border border-primary/20 px-4 py-3">
-                                <p className="text-sm font-semibold text-white">
+                                <p className="text-sm font-semibold text-foreground">
                                     {selected.reading}
                                 </p>
                             </div>
@@ -180,7 +180,7 @@ export function DevocionalHistorico({ devocionais, onUpdated }: Props) {
                                 {!editing ? (
                                     <button
                                         onClick={handleStartEdit}
-                                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs text-muted hover:text-white hover:bg-white/5 transition-colors"
+                                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                                     >
                                         <Pencil className="w-3 h-3" />
                                         Editar
@@ -190,7 +190,7 @@ export function DevocionalHistorico({ devocionais, onUpdated }: Props) {
                                         <button
                                             onClick={handleCancelEdit}
                                             disabled={saving}
-                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs text-muted hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
+                                            className="flex items-center gap-1 px-2.5 py-1 rounded-md text-xs text-muted hover:text-foreground hover:bg-foreground/5 transition-colors disabled:opacity-50"
                                         >
                                             <XIcon className="w-3 h-3" />
                                             Cancelar

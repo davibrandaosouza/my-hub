@@ -78,7 +78,7 @@ export function UpcomingEvents({ userId, events, loading, onUpdate }: Props) {
             <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-primary" />
-                    <h3 className="text-sm font-semibold text-white">Próximos Eventos</h3>
+                    <h3 className="text-sm font-semibold text-foreground">Próximos Eventos</h3>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -116,7 +116,7 @@ export function UpcomingEvents({ userId, events, loading, onUpdate }: Props) {
                                         <Clock className="w-3 h-3" />
                                         <span className="text-xs font-mono">{event.time}</span>
                                     </div>
-                                    <span className="text-sm text-white">{event.title}</span>
+                                    <span className="text-sm text-foreground">{event.title}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <span className={cn(

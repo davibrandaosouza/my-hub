@@ -63,7 +63,7 @@ export function KanbanCard({ planejamento, onClick }: Props) {
         >
             {/* LINHA 1 — título + prioridade */}
             <div className="flex items-start justify-between gap-2 mb-3">
-                <p className="text-sm font-medium text-white leading-snug flex-1">
+                <p className="text-sm font-medium text-foreground leading-snug flex-1">
                     {planejamento.titulo}
                 </p>
                 <span className={cn(

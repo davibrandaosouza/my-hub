@@ -111,7 +111,7 @@ export function DevocionalHeatmap({ devocionais, year }: Props) {
                                                 className={cn(
                                                     "w-[14px] h-[14px] rounded-sm",
                                                     !inYear && "opacity-0",
-                                                    inYear && !status && "bg-white/5",
+                                                    inYear && !status && "bg-foreground/5",
                                                     status === "ontime" && "bg-emerald-500",
                                                     status === "late" && "bg-amber-500",
                                                     todayCell && !status && "ring-1 ring-primary",
@@ -127,7 +127,7 @@ export function DevocionalHeatmap({ devocionais, year }: Props) {
                     {/* Legenda */}
                     <div className="flex items-center justify-end gap-3 mt-4">
                         <div className="flex items-center gap-1.5">
-                            <div className="w-[12px] h-[12px] rounded-sm bg-white/5 border border-white/10" />
+                            <div className="w-[12px] h-[12px] rounded-sm bg-foreground/5 border border-border" />
                             <span className="text-[10px] text-muted">Vazio</span>
                         </div>
                         <div className="flex items-center gap-1.5">

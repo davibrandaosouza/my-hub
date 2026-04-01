@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import { Plus } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { useToast } from "@/hooks/useToast"
+import { useSettings } from "@/hooks/useSettings"
+import { useAppEffects } from "@/hooks/useAppEffects"
 import { Header } from "@/components/layout/Header"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HabitItem } from "@/components/modules/rotinas/HabitItem"
@@ -41,6 +43,8 @@ export default function RotinaPage() {
     const userId = user?.uid
     const today = todayDate()
     const currentYear = new Date().getFullYear()
+    const { settings } = useSettings()
+    const { playSound } = useAppEffects()
 
     const [habits, setHabits] = useState<Habit[]>([])
     const [todayLogs, setTodayLogs] = useState<HabitLog[]>([])
@@ -74,6 +78,11 @@ export default function RotinaPage() {
     async function handleToggle(habitId: string, current: boolean) {
         if (!userId) return
         const next = !current
+
+        if (next) {
+            playSound("success")
+        }
+
         // Optimistic update
         setTodayLogs(prev => {
             const existing = prev.find(l => l.habitId === habitId)
@@ -205,7 +214,7 @@ export default function RotinaPage() {
                             {/* Header do card */}
                             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
                                 <div>
-                                    <h2 className="text-sm font-semibold text-white">Hábitos de Hoje</h2>
+                                    <h2 className="text-sm font-semibold text-foreground">Hábitos de Hoje</h2>
                                     <p className="text-xs text-muted mt-0.5 capitalize">{formatDateBR(new Date())}</p>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -231,7 +240,7 @@ export default function RotinaPage() {
                                 ) : habits.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-14 text-center">
                                         <span className="text-4xl mb-3">🌱</span>
-                                        <p className="text-sm font-medium text-white mb-1">Nenhum hábito ainda</p>
+                                        <p className="text-sm font-medium text-foreground mb-1">Nenhum hábito ainda</p>
                                         <p className="text-xs text-muted">Crie seu primeiro hábito para começar sua jornada</p>
                                         <button
                                             onClick={() => setShowModal(true)}
@@ -281,6 +290,7 @@ export default function RotinaPage() {
                                 strongestHabit={stats.strongestHabit}
                                 totalXpYear={stats.totalXpYear}
                                 avgPerDay={stats.avgPerDay}
+                                showStreaks={settings.behavior.showStreaks}
                             />
                         )}
                     </div>

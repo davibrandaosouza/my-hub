@@ -2,9 +2,11 @@
 
 import { useEffect } from "react"
 import { usePomodoroStore } from "@/hooks/usePomodoroStore"
+import { useAppEffects } from "@/hooks/useAppEffects"
 
 export function usePomodoroTick() {
-    const { status, tick } = usePomodoroStore()
+    const { status, tick, mode } = usePomodoroStore()
+    const { playSound, sendNotification } = useAppEffects()
 
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null
@@ -21,4 +23,15 @@ export function usePomodoroTick() {
             if (interval) clearInterval(interval)
         }
     }, [status, tick])
+
+    // Detectar quando a sessão termina (mudança de modo)
+    useEffect(() => {
+        if (status === "running") {
+            const label = mode === "focus" ? "Descanso encerrado! Hora de focar." : "Sessão focada concluída! Hora do descanso."
+            const body = mode === "focus" ? "Bora continuar os estudos?" : "Você merece uma pausa."
+            
+            playSound("alert")
+            sendNotification(label, body)
+        }
+    }, [mode, status, playSound, sendNotification])
 }
