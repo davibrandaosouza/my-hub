@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { Search, Plus, Tv, Flag, PlayCircle, XCircle, Sparkles } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
-import { useToastContext } from "@/app/(hub)/layout"
 import { Header } from "@/components/layout/Header"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MediaStatsBar, FilterOption } from "@/components/shared/MediaStatsBar"
@@ -12,6 +11,7 @@ import { MediaAddModal } from "@/components/shared/MediaAddModal"
 import { MediaDetailModal, StatusOption } from "@/components/shared/MediaDetailModal"
 import { getAnimes, addAnime, deleteAnime, updateAnime } from "@/lib/firebase/animes"
 import { searchAnimes } from "@/lib/jikan"
+import { useMediaData } from "@/hooks/useMediaData"
 import type { Anime, AnimeStatus } from "@/types/anime"
 
 type FilterKey = AnimeStatus | "todos"
@@ -47,22 +47,24 @@ const STATUS_OPTIONS: StatusOption<AnimeStatus>[] = [
 
 export default function AnimesPage() {
     const { user } = useAuth()
-    const toast = useToastContext()
-
-    const [animes, setAnimes] = useState<Anime[]>([])
-    const [loading, setLoading] = useState(true)
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedAnime, setSelectedAnime] = useState<Anime | null>(null)
     const [filtro, setFiltro] = useState<FilterKey>("todos")
     const [busca, setBusca] = useState("")
 
-    useEffect(() => {
-        if (!user?.uid) return
-        getAnimes(user.uid).then((data) => {
-            setAnimes(data)
-            setLoading(false)
-        })
-    }, [user?.uid])
+    // Hook unificado para mídias (React Query)
+    const { 
+        data: animes, 
+        loading, 
+        addItem, 
+        updateItem, 
+        deleteItem 
+    } = useMediaData<Anime>(user?.uid, "animes", {
+        getAll: getAnimes,
+        add: addAnime,
+        update: updateAnime,
+        delete: deleteAnime,
+    })
 
     const counts = useMemo<Record<FilterKey, number>>(() => ({
         todos: animes.length,
@@ -97,54 +99,22 @@ export default function AnimesPage() {
         status: AnimeStatus
         nota: number | null
     }) => {
-        if (!user) return
-        const animeData = {
+        await addItem({
              apiId: data.apiId,
              titulo: data.titulo,
              capaUrl: data.coverUrl,
              categoria: data.categoria,
              status: data.status,
              nota: data.nota,
-        }
-        const res = await addAnime(user.uid, animeData)
-        if (res.error || !res.id) return
-
-        const novo: Anime = {
-            ...animeData,
-            id: res.id,
-            userId: user.uid,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        }
-        setAnimes(prev => [novo, ...prev])
+        })
         setModalOpen(false)
-        toast.success("Anime adicionado com sucesso!")
     }
 
     const handleUpdate = async (id: string, updates: Partial<Anime>) => {
-        const res = await updateAnime(id, updates)
-        if (res.error) {
-            toast.error("Erro ao tentar atualizar")
-            return
-        }
-
-        setAnimes(prev => prev.map(a =>
-            a.id === id ? { ...a, ...updates, updatedAt: Date.now() } : a
-        ))
-
+        await updateItem({ id, updates })
         if (selectedAnime && selectedAnime.id === id) {
             setSelectedAnime(prev => prev ? { ...prev, ...updates } : null)
         }
-    }
-
-    const handleDelete = async (id: string) => {
-        if (!user) return
-        const res = await deleteAnime(id)
-        if (res.error) return
-
-        setAnimes(prev => prev.filter(a => a.id !== id))
-        setSelectedAnime(null)
-        toast.success("Removido da coleção")
     }
 
     return (
@@ -274,7 +244,7 @@ export default function AnimesPage() {
                 statusOptions={STATUS_OPTIONS}
                 fallbackIcon="📺"
                 onClose={() => setSelectedAnime(null)}
-                onDelete={handleDelete}
+                onDelete={deleteItem}
                 onUpdate={handleUpdate}
             />
         </div>

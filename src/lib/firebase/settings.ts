@@ -2,6 +2,12 @@ import { doc, getDoc, setDoc } from "firebase/firestore"
 import { db } from "./config"
 import { UserSettings, DEFAULT_USER_SETTINGS } from "@/types/settings"
 
+// ══════════════════════════════════════════════
+// ESTRUTURA DO FIRESTORE
+//
+// settings/{userId}       → configurações e preferências do usuário
+// ══════════════════════════════════════════════
+
 const COLLECTION = "settings"
 
 export async function getUserSettings(userId: string): Promise<UserSettings> {

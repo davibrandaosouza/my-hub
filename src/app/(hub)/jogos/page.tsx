@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { Search, Plus, Gamepad2, Flag, Clock3, XCircle, Sparkles } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
-import { useToastContext } from "@/app/(hub)/layout"
 import { Header } from "@/components/layout/Header"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MediaStatsBar, FilterOption } from "@/components/shared/MediaStatsBar"
@@ -12,6 +11,7 @@ import { MediaAddModal } from "@/components/shared/MediaAddModal"
 import { MediaDetailModal, StatusOption } from "@/components/shared/MediaDetailModal"
 import { getJogos, addJogo, deleteJogo, updateJogo } from "@/lib/firebase/jogos"
 import { searchGames } from "@/lib/rawg"
+import { useMediaData } from "@/hooks/useMediaData"
 import type { Jogo, JogoStatus } from "@/types/jogo"
 
 type FilterKey = JogoStatus | "todos"
@@ -47,22 +47,23 @@ const STATUS_OPTIONS: StatusOption<JogoStatus>[] = [
 
 export default function JogosPage() {
     const { user } = useAuth()
-    const toast = useToastContext()
-
-    const [jogos, setJogos] = useState<Jogo[]>([])
-    const [loading, setLoading] = useState(true)
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedJogo, setSelectedJogo] = useState<Jogo | null>(null)
     const [filtro, setFiltro] = useState<FilterKey>("todos")
     const [busca, setBusca] = useState("")
 
-    useEffect(() => {
-        if (!user?.uid) return
-        getJogos(user.uid).then((data) => {
-            setJogos(data)
-            setLoading(false)
-        })
-    }, [user?.uid])
+    const { 
+        data: jogos, 
+        loading, 
+        addItem, 
+        updateItem, 
+        deleteItem 
+    } = useMediaData<Jogo>(user?.uid, "jogos", {
+        getAll: getJogos,
+        add: addJogo,
+        update: updateJogo,
+        delete: deleteJogo,
+    })
 
     const counts = useMemo<Record<FilterKey, number>>(() => ({
         todos: jogos.length,
@@ -97,53 +98,22 @@ export default function JogosPage() {
         status: JogoStatus
         nota: number | null
     }) => {
-        if (!user?.uid) return
-        const jogoData = {
+        await addItem({
             rawgId: Number(data.apiId),
             titulo: data.titulo,
             coverUrl: data.coverUrl,
             categoria: data.categoria,
             status: data.status,
             nota: data.nota,
-        }
-        const { id, error } = await addJogo(user.uid, jogoData)
-        if (error || !id) {
-            toast.error(error ?? "Erro ao adicionar jogo.")
-            return
-        }
-        const novo: Jogo = {
-            id,
-            userId: user.uid,
-            ...jogoData,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        }
-        setJogos(prev => [novo, ...prev])
-        toast.success("Jogo adicionado!")
+        })
         setModalOpen(false)
     }
 
-    const handleDelete = async (id: string) => {
-        setJogos(prev => prev.filter(j => j.id !== id))
-        toast.success("Jogo removido da coleção!")
-        const { error } = await deleteJogo(id)
-        if (error) {
-            toast.error(error)
-            getJogos(user!.uid).then(setJogos)
-        }
-    }
-
-    const handleUpdateJogo = async (id: string, updates: Partial<Jogo>) => {
-        const { error } = await updateJogo(id, updates)
-        if (error) {
-            toast.error(error)
-            return
-        }
-        setJogos(prev => prev.map(j => j.id === id ? { ...j, ...updates } : j))
-        if (selectedJogo?.id === id) {
+    const handleUpdate = async (id: string, updates: Partial<Jogo>) => {
+        await updateItem({ id, updates })
+        if (selectedJogo && selectedJogo.id === id) {
             setSelectedJogo(prev => prev ? { ...prev, ...updates } : null)
         }
-        toast.success("Jogo atualizado!")
     }
 
     return (
@@ -273,11 +243,8 @@ export default function JogosPage() {
                 statusOptions={STATUS_OPTIONS}
                 fallbackIcon="🎮"
                 onClose={() => setSelectedJogo(null)}
-                onDelete={(id) => {
-                    handleDelete(id)
-                    setSelectedJogo(null)
-                }}
-                onUpdate={handleUpdateJogo}
+                onDelete={deleteItem}
+                onUpdate={handleUpdate}
             />
         </div>
     )

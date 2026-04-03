@@ -11,6 +11,13 @@ import {
 import { db } from "./config"
 import type { DashboardEvent } from "@/types/dashboard"
 
+// ══════════════════════════════════════════════
+// ESTRUTURA DO FIRESTORE
+//
+// dashboard/{userId}                → dados gerais do dashboard (ex: imagem)
+// dashboard/{userId}/events/{id}    → eventos do calendário
+// ══════════════════════════════════════════════
+
 export async function getDashboardImage(userId: string): Promise<string | null> {
     const userDocRef = doc(db, "dashboard", userId)
     const snapshot = await getDoc(userDocRef)

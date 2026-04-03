@@ -11,6 +11,13 @@ import {
 import { db } from "./config"
 import type { Serie } from "@/types/serie"
 
+// ══════════════════════════════════════════════
+// ESTRUTURA DO FIRESTORE
+//
+// series/{serieId}        → registro de série individual
+//   (cada documento contém o campo userId)
+// ══════════════════════════════════════════════
+
 export async function getSeries(userId: string): Promise<Serie[]> {
     try {
         const ref = collection(db, "series")

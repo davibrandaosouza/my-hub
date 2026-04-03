@@ -12,6 +12,13 @@ import {
 import { db } from "./config"
 import type { Planejamento, PlanejamentoStatus } from "@/types/planejamento"
 
+// ══════════════════════════════════════════════
+// ESTRUTURA DO FIRESTORE
+//
+// planejamentos/{id}      → tarefas e planejamentos individuais
+//   (cada documento contém o campo userId)
+// ══════════════════════════════════════════════
+
 // Busca todos os planejamentos do usuário
 export async function getPlanejamentos(userId: string): Promise<Planejamento[]> {
     try {

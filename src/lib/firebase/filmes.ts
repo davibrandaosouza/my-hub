@@ -11,6 +11,13 @@ import {
 import { db } from "./config"
 import type { Filme } from "@/types/filme"
 
+// ══════════════════════════════════════════════
+// ESTRUTURA DO FIRESTORE
+//
+// filmes/{filmeId}        → registro de filme individual
+//   (cada documento contém o campo userId)
+// ══════════════════════════════════════════════
+
 export async function getFilmes(userId: string): Promise<Filme[]> {
     try {
         const ref = collection(db, "filmes")

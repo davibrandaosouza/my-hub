@@ -11,13 +11,19 @@ import {
 import { db } from "./config"
 import type { Jogo, JogoStatus } from "@/types/jogo"
 
+// ══════════════════════════════════════════════
+// ESTRUTURA DO FIRESTORE
+//
+// jogos/{jogoId}          → registro de jogo individual
+//   (cada documento contém o campo userId)
+// ══════════════════════════════════════════════
+
 export async function getJogos(userId: string): Promise<Jogo[]> {
     try {
         const ref = collection(db, "jogos")
         const q = query(ref, where("userId", "==", userId))
         const snap = await getDocs(q)
         const jogos = snap.docs.map(d => ({ id: d.id, ...d.data() } as Jogo))
-        // ordena no cliente para evitar exigência de índice composto
         return jogos.sort((a, b) => b.createdAt - a.createdAt)
     } catch {
         return []

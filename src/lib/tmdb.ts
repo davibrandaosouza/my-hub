@@ -18,19 +18,20 @@ const GENRE_MAP: Record<number, string> = {
     10767: "Talk Show", 10768: "Política"
 }
 
- 
-
-export async function searchFilmes(query: string): Promise<TMDBResult[]> {
-    if (!query) return []
+async function fetchFromTMDB(endpoint: "movie" | "tv", query: string, defaultCategory: string): Promise<TMDBResult[]> {
+    if (!query.trim()) return []
+    
     try {
         const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || process.env.TMDB_API_KEY
-        if (!TMDB_KEY) console.error("TMDB_KEY is missing!")
-        
-        const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}&language=pt-BR&page=1`, {
-            headers: {
-                accept: 'application/json'
-            }
-        })
+        if (!TMDB_KEY) {
+            console.error("TMDB_KEY is missing!")
+            return []
+        }
+
+        const res = await fetch(
+            `https://api.themoviedb.org/3/search/${endpoint}?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}&language=pt-BR&page=1`,
+            { headers: { accept: "application/json" } }
+        )
 
         if (!res.ok) return []
         const data: TMDBSearchResponse = await res.json()
@@ -39,32 +40,18 @@ export async function searchFilmes(query: string): Promise<TMDBResult[]> {
             apiId: String(item.id),
             titulo: item.title || item.name || "",
             capaUrl: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "",
-            categoria: item.genre_ids?.[0] ? GENRE_MAP[item.genre_ids[0]] || "Filme" : "Filme"
+            categoria: item.genre_ids?.[0] ? GENRE_MAP[item.genre_ids[0]] || defaultCategory : defaultCategory
         }))
-    } catch {
+    } catch (error) {
+        console.error(`Error fetching from TMDB ${endpoint}:`, error)
         return []
     }
 }
 
-export async function searchSeries(query: string): Promise<TMDBResult[]> {
-    if (!query) return []
-    try {
-        const TMDB_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || process.env.TMDB_API_KEY
-        const res = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${TMDB_KEY}&query=${encodeURIComponent(query)}&language=pt-BR&page=1`, {
-            headers: {
-                accept: 'application/json'
-            }
-        })
-        if (!res.ok) return []
-        const data: TMDBSearchResponse = await res.json()
+export async function searchFilmes(query: string): Promise<TMDBResult[]> {
+    return fetchFromTMDB("movie", query, "Filme")
+}
 
-        return data.results.map((item: TMDBMovieResponse) => ({
-            apiId: String(item.id),
-            titulo: item.name || item.title || "",
-            capaUrl: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "",
-            categoria: item.genre_ids?.[0] ? GENRE_MAP[item.genre_ids[0]] || "Série" : "Série"
-        }))
-    } catch {
-        return []
-    }
+export async function searchSeries(query: string): Promise<TMDBResult[]> {
+    return fetchFromTMDB("tv", query, "Série")
 }

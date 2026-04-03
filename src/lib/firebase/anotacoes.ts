@@ -14,12 +14,11 @@ import type { Notebook, Note } from "@/types/anotacao"
 // ══════════════════════════════════════════════
 // ESTRUTURA DO FIRESTORE
 //
-// anotacoes/{userId}/notebooks/{notebookId}
-// anotacoes/{userId}/notes/{noteId}
+// anotacoes/{userId}/notebooks/{notebookId} → cadernos de anotações
+// anotacoes/{userId}/notes/{noteId}         → notas individuais
 // ══════════════════════════════════════════════
 
 // ── NOTEBOOKS ───────────────────────────────
-
 export async function getNotebooks(userId: string): Promise<Notebook[]> {
     try {
         const ref = collection(db, "anotacoes", userId, "notebooks")
@@ -49,13 +48,11 @@ export async function deleteNotebook(
     notebookId: string
 ): Promise<{ error: string | null }> {
     try {
-        // Delete all notes in notebook
         const notesRef = collection(db, "anotacoes", userId, "notes")
         const q = query(notesRef, where("notebookId", "==", notebookId))
         const snap = await getDocs(q)
         await Promise.all(snap.docs.map(d => deleteDoc(d.ref)))
 
-        // Delete notebook
         const ref = doc(db, "anotacoes", userId, "notebooks", notebookId)
         await deleteDoc(ref)
         return { error: null }
@@ -64,7 +61,7 @@ export async function deleteNotebook(
     }
 }
 
-// ── NOTES ────────────────────────────────────
+// ── NOTAS ────────────────────────────────────
 
 export async function getNotes(
     userId: string,

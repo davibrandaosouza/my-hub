@@ -11,14 +11,10 @@ import { db } from "./config"
 import type { Devocional } from "@/types/devocional"
 
 // ══════════════════════════════════════════════
-// CONCEITO: ESTRUTURA DO FIRESTORE
+// ESTRUTURA DO FIRESTORE
 //
-// Coleção: "devocionais"
-// Documento ID: "{userId}_{date}"  ex: "abc123_2026-03-19"
-//
-// Usar userId + date como ID garante:
-// 1. Um documento por usuário por dia
-// 2. Busca direta sem query
+// devocionais/{docId}               → registro diário de devocional
+//   docId = "{userId}_{date}"       (ex: "abc123_2026-03-19")
 // ══════════════════════════════════════════════
 
 function getDocId(userId: string, date: string): string {
@@ -51,7 +47,7 @@ export async function saveDevocional(
     try {
         const ref = doc(db, "devocionais", getDocId(userId, date))
         const existing = await getDoc(ref)
-        
+
         const data: Devocional = {
             id: getDocId(userId, date),
             userId,

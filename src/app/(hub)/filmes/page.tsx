@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { Search, Plus, Film, Flag, PlayCircle, XCircle, Sparkles } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
-import { useToastContext } from "@/app/(hub)/layout"
 import { Header } from "@/components/layout/Header"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MediaStatsBar, FilterOption } from "@/components/shared/MediaStatsBar"
@@ -12,6 +11,7 @@ import { MediaAddModal } from "@/components/shared/MediaAddModal"
 import { MediaDetailModal, StatusOption } from "@/components/shared/MediaDetailModal"
 import { getFilmes, addFilme, deleteFilme, updateFilme } from "@/lib/firebase/filmes"
 import { searchFilmes } from "@/lib/tmdb"
+import { useMediaData } from "@/hooks/useMediaData"
 import type { Filme, FilmeStatus } from "@/types/filme"
 
 type FilterKey = FilmeStatus | "todos"
@@ -47,22 +47,23 @@ const STATUS_OPTIONS: StatusOption<FilmeStatus>[] = [
 
 export default function FilmesPage() {
     const { user } = useAuth()
-    const toast = useToastContext()
-
-    const [filmes, setFilmes] = useState<Filme[]>([])
-    const [loading, setLoading] = useState(true)
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedFilme, setSelectedFilme] = useState<Filme | null>(null)
     const [filtro, setFiltro] = useState<FilterKey>("todos")
     const [busca, setBusca] = useState("")
 
-    useEffect(() => {
-        if (!user?.uid) return
-        getFilmes(user.uid).then((data) => {
-            setFilmes(data)
-            setLoading(false)
-        })
-    }, [user?.uid])
+    const { 
+        data: filmes, 
+        loading, 
+        addItem, 
+        updateItem, 
+        deleteItem 
+    } = useMediaData<Filme>(user?.uid, "filmes", {
+        getAll: getFilmes,
+        add: addFilme,
+        update: updateFilme,
+        delete: deleteFilme,
+    })
 
     const counts = useMemo<Record<FilterKey, number>>(() => ({
         todos: filmes.length,
@@ -97,54 +98,22 @@ export default function FilmesPage() {
         status: FilmeStatus
         nota: number | null
     }) => {
-        if (!user) return
-        const filmeData = {
+        await addItem({
              apiId: data.apiId,
              titulo: data.titulo,
              capaUrl: data.coverUrl,
              categoria: data.categoria,
              status: data.status,
              nota: data.nota,
-        }
-        const res = await addFilme(user.uid, filmeData)
-        if (res.error || !res.id) return
-
-        const novo: Filme = {
-            ...filmeData,
-            id: res.id,
-            userId: user.uid,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        }
-        setFilmes(prev => [novo, ...prev])
+        })
         setModalOpen(false)
-        toast.success("Filme adicionado com sucesso!")
     }
 
     const handleUpdate = async (id: string, updates: Partial<Filme>) => {
-        const res = await updateFilme(id, updates)
-        if (res.error) {
-            toast.error("Erro ao tentar atualizar")
-            return
-        }
-
-        setFilmes(prev => prev.map(f =>
-            f.id === id ? { ...f, ...updates, updatedAt: Date.now() } : f
-        ))
-
+        await updateItem({ id, updates })
         if (selectedFilme && selectedFilme.id === id) {
             setSelectedFilme(prev => prev ? { ...prev, ...updates } : null)
         }
-    }
-
-    const handleDelete = async (id: string) => {
-        if (!user) return
-        const res = await deleteFilme(id)
-        if (res.error) return
-
-        setFilmes(prev => prev.filter(f => f.id !== id))
-        setSelectedFilme(null)
-        toast.success("Removido da coleção")
     }
 
     return (
@@ -274,7 +243,7 @@ export default function FilmesPage() {
                 statusOptions={STATUS_OPTIONS}
                 fallbackIcon="🎬"
                 onClose={() => setSelectedFilme(null)}
-                onDelete={handleDelete}
+                onDelete={deleteItem}
                 onUpdate={handleUpdate}
             />
         </div>

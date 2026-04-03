@@ -3,7 +3,7 @@ export type Notebook = {
     userId: string
     nome: string
     emoji: string
-    cor: string // hex color
+    cor: string
     createdAt: number
 }
 
@@ -12,7 +12,7 @@ export type Note = {
     userId: string
     notebookId: string
     titulo: string
-    content: string // HTML content
+    content: string
     tags: string[]
     fontFamily: string
     fontSize: number

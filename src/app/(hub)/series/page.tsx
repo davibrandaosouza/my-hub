@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react"
 import { Search, Plus, MonitorPlay, Flag, PlayCircle, XCircle, Sparkles } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
-import { useToastContext } from "@/app/(hub)/layout"
 import { Header } from "@/components/layout/Header"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MediaStatsBar, FilterOption } from "@/components/shared/MediaStatsBar"
@@ -12,6 +11,7 @@ import { MediaAddModal } from "@/components/shared/MediaAddModal"
 import { MediaDetailModal, StatusOption } from "@/components/shared/MediaDetailModal"
 import { getSeries, addSerie, deleteSerie, updateSerie } from "@/lib/firebase/series"
 import { searchSeries } from "@/lib/tmdb"
+import { useMediaData } from "@/hooks/useMediaData"
 import type { Serie, SerieStatus } from "@/types/serie"
 
 type FilterKey = SerieStatus | "todos"
@@ -47,22 +47,23 @@ const STATUS_OPTIONS: StatusOption<SerieStatus>[] = [
 
 export default function SeriesPage() {
     const { user } = useAuth()
-    const toast = useToastContext()
-
-    const [series, setSeries] = useState<Serie[]>([])
-    const [loading, setLoading] = useState(true)
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedSerie, setSelectedSerie] = useState<Serie | null>(null)
     const [filtro, setFiltro] = useState<FilterKey>("todos")
     const [busca, setBusca] = useState("")
 
-    useEffect(() => {
-        if (!user?.uid) return
-        getSeries(user.uid).then((data) => {
-            setSeries(data)
-            setLoading(false)
-        })
-    }, [user?.uid])
+    const { 
+        data: series, 
+        loading, 
+        addItem, 
+        updateItem, 
+        deleteItem 
+    } = useMediaData<Serie>(user?.uid, "series", {
+        getAll: getSeries,
+        add: addSerie,
+        update: updateSerie,
+        delete: deleteSerie,
+    })
 
     const counts = useMemo<Record<FilterKey, number>>(() => ({
         todos: series.length,
@@ -97,54 +98,22 @@ export default function SeriesPage() {
         status: SerieStatus
         nota: number | null
     }) => {
-        if (!user) return
-        const serieData = {
+        await addItem({
              apiId: data.apiId,
              titulo: data.titulo,
              capaUrl: data.coverUrl,
              categoria: data.categoria,
              status: data.status,
              nota: data.nota,
-        }
-        const res = await addSerie(user.uid, serieData)
-        if (res.error || !res.id) return
-
-        const novo: Serie = {
-            ...serieData,
-            id: res.id,
-            userId: user.uid,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-        }
-        setSeries(prev => [novo, ...prev])
+        })
         setModalOpen(false)
-        toast.success("Série adicionada com sucesso!")
     }
 
     const handleUpdate = async (id: string, updates: Partial<Serie>) => {
-        const res = await updateSerie(id, updates)
-        if (res.error) {
-            toast.error("Erro ao tentar atualizar")
-            return
-        }
-
-        setSeries(prev => prev.map(s =>
-            s.id === id ? { ...s, ...updates, updatedAt: Date.now() } : s
-        ))
-
+        await updateItem({ id, updates })
         if (selectedSerie && selectedSerie.id === id) {
             setSelectedSerie(prev => prev ? { ...prev, ...updates } : null)
         }
-    }
-
-    const handleDelete = async (id: string) => {
-        if (!user) return
-        const res = await deleteSerie(id)
-        if (res.error) return
-
-        setSeries(prev => prev.filter(s => s.id !== id))
-        setSelectedSerie(null)
-        toast.success("Removida da coleção")
     }
 
     return (
@@ -274,7 +243,7 @@ export default function SeriesPage() {
                 statusOptions={STATUS_OPTIONS}
                 fallbackIcon="📺"
                 onClose={() => setSelectedSerie(null)}
-                onDelete={handleDelete}
+                onDelete={deleteItem}
                 onUpdate={handleUpdate}
             />
         </div>

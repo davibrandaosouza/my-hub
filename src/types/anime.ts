@@ -14,7 +14,7 @@ export interface Anime {
 }
 
 export type JikanAnimeResponse = {
-    mal_id: number;
+    mal_id: number; // ID do anime na API
     title: string;
     title_english?: string;
     images: {

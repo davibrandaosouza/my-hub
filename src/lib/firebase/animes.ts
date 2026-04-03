@@ -11,6 +11,13 @@ import {
 import { db } from "./config"
 import type { Anime } from "@/types/anime"
 
+// ══════════════════════════════════════════════
+// ESTRUTURA DO FIRESTORE
+//
+// animes/{animeId}        → registro de anime individual
+//   (cada documento contém o campo userId)
+// ══════════════════════════════════════════════
+
 export async function getAnimes(userId: string): Promise<Anime[]> {
     try {
         const ref = collection(db, "animes")

@@ -8,12 +8,11 @@ export type Jogo = {
     coverUrl: string
     categoria: string
     status: JogoStatus
-    nota: number | null     // 0–10
+    nota: number | null
     createdAt: number
     updatedAt: number
 }
 
-// Resposta da RAWG
 export type RawgGame = {
     id: number
     name: string

@@ -54,18 +54,18 @@ export async function deleteHabit(
     habitId: string
 ): Promise<{ error: string | null }> {
     try {
-        // 1. Deletar todos os logs associados a este hábito
+        // Deletar todos os logs associados a este hábito
         const logsRef = collection(db, "habitos", userId, "logs")
         const q = query(logsRef, where("habitId", "==", habitId))
         const snap = await getDocs(q)
-        
+
         const deletePromises = snap.docs.map(doc => deleteDoc(doc.ref))
         await Promise.all(deletePromises)
 
-        // 2. Deletar a configuração do hábito
+        // Deletar a configuração do hábito
         const ref = doc(db, "habitos", userId, "items", habitId)
         await deleteDoc(ref)
-        
+
         return { error: null }
     } catch {
         return { error: "Erro ao deletar hábito e seus registros." }
@@ -155,7 +155,7 @@ export function calculateStreak(logs: HabitLog[]): number {
     return streak
 }
 
-// Maior sequência já alcançada (recorde histórico)
+// Maior sequência já alcançada
 export function calculateBestStreak(logs: HabitLog[]): number {
     const sortedDates = [...new Set(
         logs.filter(l => l.completed).map(l => l.date)

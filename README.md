@@ -54,15 +54,12 @@ MyHub nasceu com dois objetivos:
 | **Dashboard**     | Visão geral do dia, stats, acesso rápido, eventos   | ✅ Concluído |
 | **Devocionais**   | Registro diário, versículo, reflexão, streak        | ✅ Concluído |
 | **Planejamentos** | Kanban board, metas, projetos com prioridades       | ✅ Concluído |
-| **Anotações**     | Editor markdown, tags, busca, auto-save             | 🔲 Em breve  |
-| **Rotinas**       | Hábitos diários, checklist por período, heatmap     | 🔲 Em breve  |
-| **Pomodoro**      | Timer, fila de tarefas, estatísticas de foco        | 🔲 Em breve  |
-| **Guitarra**      | Acordes, progressões, Web Audio API                 | 🔲 Em breve  |
-| **UFES**          | Disciplinas, provas, grade e acompanhamento         | 🔲 Em breve  |
-| **Programação**   | Estudos, projetos, recursos e progresso             | 🔲 Em breve  |
-| **Animes**        | Lista de animes, status, integração AniList API     | ✅ Concluído |
-| **Filmes**        | Lista de filmes, status, avaliações                 | ✅ Concluído |
-| **Séries**        | Lista de séries, episódios assistidos               | ✅ Concluído |
+| **Anotações**     | Editor markdown, tags, busca, auto-save             | ✅ Concluído |
+| **Rotinas**       | Hábitos diários, checklist por período, heatmap     | ✅ Concluído |
+| **Pomodoro**      | Timer, fila de tarefas, estatísticas de foco        | ✅ Concluído |
+| **Animes**        | Lista de animes, status, integração Jikan API       | ✅ Concluído |
+| **Filmes**        | Lista de filmes, status, avaliações (TMDB)          | ✅ Concluído |
+| **Séries**        | Lista de séries, episódios assistidos (TMDB)        | ✅ Concluído |
 | **Jogos**         | Lista de jogos, status, integração RAWG API         | ✅ Concluído |
 
 ---
@@ -76,7 +73,6 @@ Navegação lateral colapsável com grupos organizados por categoria:
 - **Visão Geral** — Dashboard
 - **Espiritual** — Devocionais
 - **Produtividade** — Planejamentos, Anotações, Pomodoro, Rotinas
-- **Estudos** — Guitarra, UFES, Programação
 - **Entretenimento** — Animes, Filmes, Séries, Jogos
 - **Rodapé** — Configurações e logout
 
@@ -177,11 +173,6 @@ Regras de segurança configuradas diretamente no banco garantem que cada usuári
 - [ ] Módulo de Rotinas
 - [x] Módulo de Devocionais
 
-### Fase 4 — Estudos
-
-- [ ] Módulo UFES (disciplinas e grade)
-- [ ] Módulo de Programação
-- [ ] Módulo de Guitarra (Web Audio API)
 
 ### Fase 5 — Planejamento
 
@@ -201,6 +192,28 @@ Regras de segurança configuradas diretamente no banco garantem que cada usuári
 - [ ] PWA (Progressive Web App)
 - [ ] Notificações push
 - [ ] Deploy em produção
+
+---
+
+---
+
+## Estrutura do Projeto
+
+Para ajudar na compreensão das responsabilidades de cada parte do código:
+
+-   **`src/app/`**: O coração do roteamento (Next.js App Router).
+    -   `layout.tsx`: Estrutura global (HTML, Body, Fontes).
+    -   `(auth)/`: Páginas de login e registro.
+    -   `(hub)/`: Área logada. O `layout.tsx` aqui gerencia o Sidebar e o estado do Toast.
+-   **`src/components/`**: Peças de construção da interface.
+    -   `ui/`: Botões, inputs e outros componentes genéricos (Design System).
+    -   `layout/`: Sidebar e outros componentes de estrutura.
+    -   `modules/`: Lógica visual específica de cada ferramenta (ex: Editor de Notas).
+-   **`src/hooks/`**: Onde a "mágica" acontece. Encapsula toda a lógica de negócio e integração com banco de dados para que os componentes fiquem limpos.
+-   **`src/lib/`**: Ferramentas e configurações.
+    -   `firebase/`: Configurações e funções CRUD para o Firestore.
+    -   `validations/`: Schemas do Zod para garantir que você nunca envie dados inválidos ao banco.
+-   **`src/middleware.ts`**: O segurança na porta. Verifica se você está logado antes de deixar carregar qualquer página do Hub.
 
 ---
 
