@@ -28,14 +28,7 @@ function todayDate() {
     return new Date().toISOString().split("T")[0]
 }
 
-function formatDateBR(date: Date) {
-    return date.toLocaleDateString("pt-BR", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    })
-}
+ 
 
 export default function RotinaPage() {
     const { user } = useAuth()
@@ -214,8 +207,7 @@ export default function RotinaPage() {
                             {/* Header do card */}
                             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
                                 <div>
-                                    <h2 className="text-sm font-semibold text-foreground">Hábitos de Hoje</h2>
-                                    <p className="text-xs text-muted mt-0.5 capitalize">{formatDateBR(new Date())}</p>
+                                    <h2 className="text-sm font-semibold text-foreground leading-none">Hábitos de Hoje</h2>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <span className="text-xs text-muted">

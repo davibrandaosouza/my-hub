@@ -41,7 +41,7 @@ export function AppearanceSettings() {
             <div className="space-y-6">
                 <div>
                     <label className="text-sm font-medium text-foreground block mb-3">Tema</label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <button
                             onClick={() => handleThemeChange("dark")}
                             className={`flex items-center justify-center gap-2 p-3 rounded-lg border transition-all ${settings.appearance.theme === "dark" ? "border-primary bg-primary/10 text-primary font-medium" : "border-border bg-background text-muted hover:text-foreground"}`}

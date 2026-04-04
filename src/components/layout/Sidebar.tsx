@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import {
@@ -68,10 +68,23 @@ export function Sidebar() {
     const pathname = usePathname()
     const router = useRouter()
     const [collapsed, setCollapsed] = useState(false)
+    const [isMobile, setIsMobile] = useState(false)
     const [closedGroups, setClosedGroups] = useState<string[]>([])
     const [showLogoutModal, setShowLogoutModal] = useState(false)
     const toast = useToastContext()
     const { settings } = useSettings()
+
+    useEffect(() => {
+        const checkMobile = () => {
+            const mobile = window.innerWidth < 1024
+            setIsMobile(mobile)
+            if (mobile) setCollapsed(true)
+        }
+        
+        checkMobile()
+        window.addEventListener("resize", checkMobile)
+        return () => window.removeEventListener("resize", checkMobile)
+    }, [])
 
     const toggleGroup = (title: string) => {
         setClosedGroups(prev =>
@@ -116,14 +129,16 @@ export function Sidebar() {
             </div>
 
             {/* ── BOTÃO COLAPSAR ── */}
-            <button
-                onClick={() => setCollapsed(!collapsed)}
-                className="absolute -right-3 top-[62px] z-10 w-6 h-6 rounded-full bg-card-background border border-border flex items-center justify-center text-muted hover:text-foreground transition-colors"
-            >
-                <ChevronRight
-                    className={cn("w-3 h-3 transition-transform duration-300", collapsed ? "" : "rotate-180")}
-                />
-            </button>
+            {!isMobile && (
+                <button
+                    onClick={() => setCollapsed(!collapsed)}
+                    className="absolute -right-3 top-[62px] z-10 w-6 h-6 rounded-full bg-card-background border border-border flex items-center justify-center text-muted hover:text-foreground transition-colors"
+                >
+                    <ChevronRight
+                        className={cn("w-3 h-3 transition-transform duration-300", collapsed ? "" : "rotate-180")}
+                    />
+                </button>
+            )}
 
             {/* ── NAVEGAÇÃO ── */}
             <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 space-y-1">

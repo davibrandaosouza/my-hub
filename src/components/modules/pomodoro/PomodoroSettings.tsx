@@ -26,7 +26,7 @@ export function PomodoroSettings({ onClose }: PomodoroSettingsProps) {
 
     return (
         <div className="bg-card-background border border-border rounded-2xl p-4 space-y-4 animate-in fade-in zoom-in-95 duration-200 shadow-xl">
-            <div className="grid grid-cols-3 items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
                 <div className="space-y-1.5">
                     <label className="text-[10px] uppercase tracking-wider text-muted font-semibold">Trabalho</label>
                     <div className="flex items-center gap-2">

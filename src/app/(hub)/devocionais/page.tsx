@@ -73,24 +73,24 @@ export default function DevocionalPage() {
             <div className="p-6 space-y-6">
 
                 {/* ── STREAK BANNER ── */}
-                <div className="rounded-xl border border-border bg-card-background p-5 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center">
+                <div className="rounded-xl border border-border bg-card-background p-5 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-4">
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                        <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0">
                             <Flame className="w-6 h-6 text-red-400" />
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-foreground">{streak} dias</p>
-                            <p className="text-sm text-muted">Sequência atual de devocionais</p>
+                            <p className="text-2xl font-bold text-foreground leading-tight">{streak} dias</p>
+                            <p className="text-xs sm:text-sm text-muted">Sequência atual de devocionais</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-8 text-center">
+                    <div className="flex items-center justify-around sm:justify-end gap-8 text-center w-full sm:w-auto border-t sm:border-t-0 border-border/50 pt-4 sm:pt-0">
                         <div>
                             <p className="text-2xl font-bold text-foreground">{totalThisMonth}</p>
-                            <p className="text-xs text-muted uppercase tracking-wider">Este mês</p>
+                            <p className="text-[10px] sm:text-xs text-muted uppercase tracking-wider">Este mês</p>
                         </div>
                         <div>
                             <p className="text-2xl font-bold text-foreground">{total}</p>
-                            <p className="text-xs text-muted uppercase tracking-wider">Total</p>
+                            <p className="text-[10px] sm:text-xs text-muted uppercase tracking-wider">Total</p>
                         </div>
                     </div>
                 </div>

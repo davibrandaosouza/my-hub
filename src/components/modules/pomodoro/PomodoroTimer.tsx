@@ -61,34 +61,34 @@ export function PomodoroTimer() {
 
             {/* Circulo do timer */}
             <div className="relative flex items-center justify-center">
-                <svg className="w-80 h-80 -rotate-90 transform">
-                    {/* Circulo de fundo */}
-                    <circle
-                        cx="160"
-                        cy="160"
-                        r="140"
-                        className="stroke-foreground/5 fill-none"
-                        strokeWidth="8"
-                    />
-                    {/* Circulo de progresso */}
-                    <circle
-                        cx="160"
-                        cy="160"
-                        r="140"
-                        className={cn(
-                            "fill-none transition-all duration-1000 ease-linear",
-                            mode === "focus" ? "stroke-primary" : "stroke-amber-500"
-                        )}
-                        strokeWidth="4"
-                        strokeDasharray={circumference}
-                        strokeDashoffset={offset}
-                        strokeLinecap="round"
-                    />
-                </svg>
+                <svg viewBox="0 0 320 320" className="w-full max-w-[240px] sm:max-w-80 aspect-square -rotate-90 transform">
+                     {/* Circulo de fundo */}
+                     <circle
+                         cx="160"
+                         cy="160"
+                         r="140"
+                         className="stroke-foreground/5 fill-none"
+                         strokeWidth="8"
+                     />
+                     {/* Circulo de progresso */}
+                     <circle
+                         cx="160"
+                         cy="160"
+                         r="140"
+                         className={cn(
+                             "fill-none transition-all duration-1000 ease-linear",
+                             mode === "focus" ? "stroke-primary" : "stroke-amber-500"
+                         )}
+                         strokeWidth="4"
+                         strokeDasharray={circumference}
+                         strokeDashoffset={offset}
+                         strokeLinecap="round"
+                     />
+                 </svg>
 
                 {/* Exibição do tempo */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-foreground">
-                    <span className="text-6xl font-bold tracking-tighter tabular-nums">
+                    <span className="text-5xl sm:text-6xl font-bold tracking-tighter tabular-nums leading-none">
                         {formatTime(timeLeft)}
                     </span>
                     <span className="text-sm text-muted mt-1 font-medium">
@@ -98,20 +98,13 @@ export function PomodoroTimer() {
             </div>
 
             {/* Botões de controle */}
-            <div className="flex flex-col items-center gap-6">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={resetTimer}
-                        className="p-3 rounded-2xl bg-foreground/5 text-muted hover:text-foreground transition-colors"
-                        title="Reiniciar"
-                    >
-                        <RotateCcw className="w-5 h-5" />
-                    </button>
-
+            <div className="flex flex-col items-center gap-6 w-full px-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-4 w-full sm:w-auto">
+                    {/* Botão Principal: Iniciar/Pausar */}
                     <button
                         onClick={status === "running" ? pauseTimer : startTimer}
                         className={cn(
-                            "flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg active:scale-95",
+                            "order-1 sm:order-2 flex items-center justify-center gap-3 px-10 py-5 rounded-2xl font-semibold transition-all shadow-lg active:scale-95 w-full sm:w-auto",
                             status === "running"
                                 ? "bg-foreground/10 text-foreground hover:bg-foreground/20"
                                 : "bg-primary text-white hover:bg-primary-active shadow-primary/20"
@@ -130,19 +123,30 @@ export function PomodoroTimer() {
                         )}
                     </button>
 
-                    <button
-                        onClick={skipSession}
-                        className="p-3 rounded-2xl bg-foreground/5 text-muted hover:text-foreground transition-colors"
-                        title="Pular"
-                    >
-                        <SkipForward className="w-5 h-5" />
-                    </button>
+                    {/* Botões Secundários: Reiniciar e Pular */}
+                    <div className="order-2 sm:order-1 flex items-center justify-center gap-4 w-full sm:w-auto">
+                        <button
+                            onClick={resetTimer}
+                            className="p-4 rounded-2xl bg-foreground/5 text-muted hover:text-foreground transition-colors flex-1 sm:flex-none flex justify-center"
+                            title="Reiniciar"
+                        >
+                            <RotateCcw className="w-5 h-5" />
+                        </button>
+
+                        <button
+                            onClick={skipSession}
+                            className="p-4 rounded-2xl bg-foreground/5 text-muted hover:text-foreground transition-colors flex-1 sm:flex-none flex justify-center sm:order-3"
+                            title="Pular"
+                        >
+                            <SkipForward className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Botão de configurações */}
                 <button
                     onClick={() => setShowSettings(!showSettings)}
-                    className="flex items-center gap-2 text-xs text-muted hover:text-foreground transition-colors group"
+                    className="flex items-center gap-2 text-xs text-muted hover:text-foreground transition-colors group mt-2"
                 >
                     <SettingsIcon className="w-4 h-4 group-hover:rotate-90 transition-transform" />
                     <span>Ajustar timer</span>
@@ -150,7 +154,7 @@ export function PomodoroTimer() {
 
                 {/* Painel de configurações */}
                 <div className={cn(
-                    "overflow-hidden transition-all duration-300 ease-in-out w-full max-w-md",
+                    "overflow-hidden transition-all duration-300 ease-in-out w-full max-w-[340px] sm:max-w-md mx-auto",
                     showSettings ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0"
                 )}>
                     <PomodoroSettings onClose={() => setShowSettings(false)} />

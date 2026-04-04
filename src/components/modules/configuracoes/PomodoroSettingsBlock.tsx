@@ -28,7 +28,7 @@ export function PomodoroSettingsBlock() {
                 <h2>Pomodoro Padrão</h2>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                     <label className="text-sm font-medium text-foreground block mb-2">Tempo de Trabalho (min)</label>
                     <input

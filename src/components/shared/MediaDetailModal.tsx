@@ -61,7 +61,7 @@ export function MediaDetailModal<TStatus extends string>({
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-xl rounded-2xl border border-border bg-card-background shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+                className="w-full max-w-xl rounded-2xl border border-border bg-card-background shadow-2xl flex flex-col overflow-y-auto max-h-[90vh] animate-in fade-in zoom-in-95 duration-200 custom-scrollbar"
             >
                 {/* Header Cover */}
                 <div className="relative h-64 sm:h-80 w-full bg-foreground/5">
@@ -140,7 +140,7 @@ export function MediaDetailModal<TStatus extends string>({
                             }}
                             onMouseLeave={() => setIsConfirmingDelete(false)}
                             className={cn(
-                                "flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-300 flex-wide sm:flex-1",
+                                "flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-300 flex-1",
                                 isConfirmingDelete
                                     ? "bg-red-500/10 text-red-500 border-red-500/40 hover:bg-red-500/20 scale-[0.99] font-medium"
                                     : "border-red-500/30 text-red-500 hover:bg-red-500/10"
@@ -154,7 +154,7 @@ export function MediaDetailModal<TStatus extends string>({
                         <button
                             onClick={handleSave}
                             disabled={savingNota}
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/50 transition-colors flex-wide sm:flex-1 disabled:opacity-50"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 hover:border-primary/50 transition-colors flex-1 disabled:opacity-50"
                         >
                             <Save className="w-4 h-4 shrink-0" />
                             <span className="text-sm font-medium">

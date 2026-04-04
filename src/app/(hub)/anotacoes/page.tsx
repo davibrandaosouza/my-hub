@@ -9,6 +9,7 @@ import { NotebookList } from "@/components/modules/anotacoes/NotebookList"
 import { NoteEditor } from "@/components/modules/anotacoes/NoteEditor"
 import { NotebookModal } from "@/components/modules/anotacoes/NotebookModal"
 import { EmptyState } from "@/components/modules/anotacoes/EmptyState"
+import { cn } from "@/lib/utils"
 import {
     getNotebooks,
     saveNotebook,
@@ -29,6 +30,27 @@ export default function AnotacoesPage() {
     const [selectedNote, setSelectedNote] = useState<Note | null>(null)
     const [pageLoading, setPageLoading] = useState(true)
     const [showNotebookModal, setShowNotebookModal] = useState(false)
+
+    // Lógica de Responsividade
+    const [isMobile, setIsMobile] = useState(false)
+    const [mobileView, setMobileView] = useState<"list" | "editor">("list")
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768)
+        checkMobile()
+        window.addEventListener("resize", checkMobile)
+        return () => window.removeEventListener("resize", checkMobile)
+    }, [])
+
+    // Quando selecionar uma nota em mobile, mudar para o editor automaticamente
+    useEffect(() => {
+        if (selectedNote && isMobile) {
+            // Usar requestAnimationFrame ou setTimeout para evitar renderização síncrona
+            requestAnimationFrame(() => {
+                setMobileView("editor")
+            })
+        }
+    }, [selectedNote, isMobile])
 
     // ── Load data ──────────────────────────────────
     const loadData = useCallback(async () => {
@@ -147,8 +169,12 @@ export default function AnotacoesPage() {
     }
 
     return (
-        <div className="flex flex-col h-screen">
-            <Header title="Anotações" />
+        <div className="flex flex-col h-screen overflow-hidden">
+            <Header 
+                title={isMobile && mobileView === "editor" ? (selectedNote?.titulo || "Nota") : "Anotações"} 
+                showBack={isMobile && mobileView === "editor"}
+                onBack={() => setMobileView("list")}
+            />
 
             {pageLoading ? (
                 <div className="flex flex-1 gap-0 overflow-hidden">
@@ -158,35 +184,42 @@ export default function AnotacoesPage() {
             ) : (
                 <div className="flex flex-1 overflow-hidden">
                     {/* ── Sidebar ── */}
-                    <aside className="w-64 shrink-0 border-r border-border flex flex-col overflow-hidden bg-card-background">
-                        <NotebookList
-                            notebooks={notebooks}
-                            notes={notes}
-                            selectedNoteId={selectedNote?.id ?? null}
-                            onSelectNote={setSelectedNote}
-                            onNewNote={handleNewNote}
-                            onNewNotebook={() => setShowNotebookModal(true)}
-                            onDeleteNote={handleDeleteNote}
-                            onDeleteNotebook={handleDeleteNotebook}
-                        />
-                    </aside>
+                    {(!isMobile || mobileView === "list") && (
+                        <aside className={cn(
+                            "shrink-0 border-r border-border flex flex-col overflow-hidden bg-card-background",
+                            isMobile ? "w-full" : "w-64"
+                        )}>
+                            <NotebookList
+                                notebooks={notebooks}
+                                notes={notes}
+                                selectedNoteId={selectedNote?.id ?? null}
+                                onSelectNote={setSelectedNote}
+                                onNewNote={handleNewNote}
+                                onNewNotebook={() => setShowNotebookModal(true)}
+                                onDeleteNote={handleDeleteNote}
+                                onDeleteNotebook={handleDeleteNotebook}
+                            />
+                        </aside>
+                    )}
 
                     {/* ── Editor panel ── */}
-                    <main className="flex-1 overflow-hidden">
-                        {selectedNote ? (
-                            <NoteEditor
-                                key={selectedNote.id}
-                                note={selectedNote}
-                                onSave={handleSaveNote}
-                            />
-                        ) : (
-                            <EmptyState
-                                hasNotebooks={notebooks.length > 0}
-                                onNewNotebook={() => setShowNotebookModal(true)}
-                                onNewNote={handleFirstNote}
-                            />
-                        )}
-                    </main>
+                    {(!isMobile || mobileView === "editor") && (
+                        <main className="flex-1 overflow-hidden">
+                            {selectedNote ? (
+                                <NoteEditor
+                                    key={selectedNote.id}
+                                    note={selectedNote}
+                                    onSave={handleSaveNote}
+                                />
+                            ) : !isMobile && (
+                                <EmptyState
+                                    hasNotebooks={notebooks.length > 0}
+                                    onNewNotebook={() => setShowNotebookModal(true)}
+                                    onNewNote={handleFirstNote}
+                                />
+                            )}
+                        </main>
+                    )}
                 </div>
             )}
 

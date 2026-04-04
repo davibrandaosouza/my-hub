@@ -104,7 +104,7 @@ export function ProfileSettings() {
                     )}
                 </div>
 
-                <div className="flex-1">
+                <div className="flex-1 hidden sm:block">
                     <h3 className="text-lg font-bold text-foreground">{settings.profile.displayName || "MyHub"}</h3>
                     <p className="text-sm text-muted">{user?.email}</p>
                 </div>
@@ -122,7 +122,7 @@ export function ProfileSettings() {
             <div className="space-y-4">
                 <div>
                     <label className="text-sm text-muted mb-1 block">Nome</label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                         <input
                             type="text"
                             value={nameInput}
@@ -133,14 +133,14 @@ export function ProfileSettings() {
                         {isEditingName ? (
                             <button
                                 onClick={handleSaveName}
-                                className="px-4 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg transition-colors"
+                                className="px-4 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg transition-colors w-full sm:w-auto"
                             >
                                 Salvar
                             </button>
                         ) : (
                             <button
                                 onClick={() => setIsEditingName(true)}
-                                className="px-4 py-2 bg-foreground/5 hover:bg-foreground/10 text-foreground text-sm font-medium rounded-lg transition-colors border border-border"
+                                className="px-4 py-2 bg-foreground/5 hover:bg-foreground/10 text-foreground text-sm font-medium rounded-lg transition-colors border border-border w-full sm:w-auto"
                             >
                                 Editar
                             </button>

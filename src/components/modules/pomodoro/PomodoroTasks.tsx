@@ -27,19 +27,21 @@ export function PomodoroTasks() {
             </div>
 
             {/* Adicionar tarefa */}
-            <form onSubmit={handleAddTask} className="flex gap-2">
+            {/* Adicionar tarefa */}
+            <form onSubmit={handleAddTask} className="flex flex-col sm:flex-row gap-2">
                 <input
                     type="text"
                     value={newTaskText}
                     onChange={(e) => setNewTaskText(e.target.value)}
                     placeholder="Adicionar tarefa..."
-                    className="flex-1 bg-foreground/5 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted focus:outline-hidden focus:border-primary/50 transition-colors"
+                    className="flex-1 bg-foreground/5 border border-border rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-foreground placeholder:text-muted focus:outline-hidden focus:border-primary/50 transition-colors"
                 />
                 <button
                     type="submit"
-                    className="p-3 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-2.5 sm:p-3 rounded-xl bg-primary text-white sm:bg-primary/10 sm:text-primary hover:bg-primary/90 sm:hover:bg-primary/20 transition-colors shrink-0"
                 >
                     <Plus className="w-5 h-5" />
+                    <span className="sm:hidden text-sm font-medium">Adicionar</span>
                 </button>
             </form>
 

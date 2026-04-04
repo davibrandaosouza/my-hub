@@ -26,7 +26,7 @@ export function HabitItem({ habit, log, onToggle, onDelete }: Props) {
     return (
         <div
             className={`
-                flex items-center gap-4 px-4 py-3.5 rounded-xl border transition-all duration-200 group
+                flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl border transition-all duration-200 group
                 ${completed
                     ? "border-primary/30 bg-primary/5"
                     : "border-border bg-card-background hover:border-border/80 hover:bg-foreground/2"
@@ -64,10 +64,10 @@ export function HabitItem({ habit, log, onToggle, onDelete }: Props) {
             </button>
 
             {/* Emoji */}
-            <span className="text-xl select-none">{habit.emoji}</span>
+            <span className="text-lg select-none shrink-0">{habit.emoji}</span>
 
             {/* Nome */}
-            <span className={`flex-1 text-sm font-medium transition-all duration-200 ${completed ? "line-through text-muted" : "text-foreground"}`}>
+            <span className={`flex-1 text-xs sm:text-sm font-medium transition-all duration-200 ${completed ? "line-through text-muted" : "text-foreground"}`}>
                 {habit.name}
             </span>
 

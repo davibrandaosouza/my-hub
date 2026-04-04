@@ -42,13 +42,13 @@ export function QuickAccess({ loading }: QuickAccessProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-xl border border-border bg-card-background p-4 hover:border-primary/40 hover:bg-primary/5 transition-all group"
+                className="rounded-xl border border-border bg-card-background p-3 sm:p-4 hover:border-primary/40 hover:bg-primary/5 transition-all group"
               >
-                <Icon className="w-5 h-5 text-primary mb-3" />
-                <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-2 sm:mb-3" />
+                <p className="text-xs sm:text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
                   {item.label}
                 </p>
-                <p className="text-xs text-muted mt-0.5">{item.description}</p>
+                <p className="text-[10px] sm:text-xs text-muted mt-0.5 truncate">{item.description}</p>
               </Link>
             )
           })}
