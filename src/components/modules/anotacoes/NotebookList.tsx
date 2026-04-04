@@ -70,7 +70,7 @@ export function NotebookList({
 
     return (
         <div className="flex flex-col h-full">
-            {/* Search */}
+            {/* Busca */}
             <div className="px-6 pt-6 pb-3 border-b border-border">
                 <div className="relative">
                     <Search className="absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted/70" />
@@ -84,10 +84,10 @@ export function NotebookList({
                 </div>
             </div>
 
-            {/* Notebooks list */}
+            {/* Lista de cadernos */}
             <div className="flex-1 overflow-y-auto py-2 space-y-0.5">
                 {search && allFilteredNotes ? (
-                    // Flat search results
+                    // Resultados da busca
                     <div className="px-2">
                         <p className="text-[10px] text-muted uppercase tracking-wider px-2 py-1.5 font-semibold">
                             {allFilteredNotes.length} resultado{allFilteredNotes.length !== 1 ? "s" : ""}
@@ -114,7 +114,7 @@ export function NotebookList({
 
                         return (
                             <div key={nb.id}>
-                                {/* Notebook header */}
+                                {/* Cabeçalho do caderno */}
                                 <div
                                     className="group flex items-center gap-1 mx-2 px-2 py-1.5 rounded-lg cursor-pointer hover:bg-foreground/5 transition-colors"
                                     onMouseEnter={() => setHoveredNotebook(nb.id)}
@@ -141,7 +141,7 @@ export function NotebookList({
                                         </span>
                                     </button>
 
-                                    {/* Actions */}
+                                    {/* Ações */}
                                     <div className={cn(
                                         "flex items-center gap-0.5 transition-opacity",
                                         hoveredNotebook === nb.id ? "opacity-100" : "opacity-0"
@@ -163,7 +163,7 @@ export function NotebookList({
                                     </div>
                                 </div>
 
-                                {/* Notes */}
+                                {/* Notas */}
                                 {isOpen && (
                                     <div className="ml-4 mb-1">
                                         {nbNotes.length === 0 ? (
@@ -205,7 +205,7 @@ export function NotebookList({
                 )}
             </div>
 
-            {/* Footer */}
+            {/* Rodapé */}
             <div className="p-3 border-t border-border">
                 <button
                     onClick={onNewNotebook}
@@ -219,7 +219,7 @@ export function NotebookList({
     )
 }
 
-// ── Sub-componente NoteItem ─────────────────────
+// Sub-componente NoteItem
 
 function NoteItem({
     note,

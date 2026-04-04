@@ -28,7 +28,6 @@ export function UpcomingEvents({ userId, events, loading, onUpdate }: Props) {
         if (t.includes("pess") || t.includes("self")) return "bg-amber-500/20 text-amber-400"
         if (t.includes("dev") || t.includes("prog")) return "bg-indigo-500/20 text-indigo-400"
 
-        // Default based on first letter hash
         const colors = [
             "bg-blue-500/20 text-blue-400",
             "bg-purple-500/20 text-purple-400",
@@ -70,7 +69,6 @@ export function UpcomingEvents({ userId, events, loading, onUpdate }: Props) {
         }
     }
 
-    // Sort events by time HH:mm
     const sortedEvents = [...events].sort((a, b) => a.time.localeCompare(b.time))
 
     return (
@@ -100,7 +98,7 @@ export function UpcomingEvents({ userId, events, loading, onUpdate }: Props) {
                 ) : events.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-xl px-4 my-1">
                         <p className="text-xs text-muted">Nenhum evento registrado hoje.</p>
-                        <button 
+                        <button
                             onClick={() => setIsModalOpen(true)}
                             className="text-xs text-primary hover:underline mt-2 flex items-center gap-1"
                         >

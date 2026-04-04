@@ -32,7 +32,7 @@ export function PomodoroTimer() {
 
     const totalTime = getTotalTime()
     const progress = (timeLeft / totalTime) * 100
-    const circumference = 2 * Math.PI * 140 // radius = 140
+    const circumference = 2 * Math.PI * 140 // Raio = 140
     const offset = circumference - (progress / 100) * circumference
 
     const formatTime = (seconds: number) => {

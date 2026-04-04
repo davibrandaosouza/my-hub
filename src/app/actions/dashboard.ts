@@ -3,8 +3,8 @@
 import { put, del } from "@vercel/blob"
 
 export async function uploadDashboardImageAction(
-    userId: string, 
-    formData: FormData, 
+    userId: string,
+    formData: FormData,
     oldImageUrl?: string | null
 ) {
     const file = formData.get("file") as File
@@ -12,7 +12,7 @@ export async function uploadDashboardImageAction(
         throw new Error("Arquivo ou ID do usuário não fornecido")
     }
 
-    // 1. Se existir uma imagem antiga, deletar do Vercel Blob para economizar espaço
+    // Se existir uma imagem antiga, deletar do Vercel Blob para economizar espaço
     if (oldImageUrl) {
         try {
             await del(oldImageUrl)
@@ -21,7 +21,7 @@ export async function uploadDashboardImageAction(
         }
     }
 
-    // 2. Upload da nova imagem
+    // Upload da nova imagem
     const filename = `dashboard/${userId}-${Date.now()}-${file.name}`
     const blob = await put(filename, file, {
         access: 'public',

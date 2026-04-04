@@ -50,7 +50,6 @@ const navGroups: NavGroup[] = [
             { label: "Rotinas", href: "/rotinas", icon: RotateCcw },
         ],
     },
-// Removed Estudos category
     {
         title: "Entretenimento",
         items: [
@@ -100,9 +99,9 @@ export function Sidebar() {
             {/* ── TOPO: AVATAR + NOME ── */}
             <div className="flex items-center gap-3 px-4 py-5 border-b border-border">
                 {settings.profile.avatarUrl ? (
-                    <img /* eslint-disable-line @next/next/no-img-element */ 
-                        src={settings.profile.avatarUrl} 
-                        alt="Avatar" 
+                    <img /* eslint-disable-line @next/next/no-img-element */
+                        src={settings.profile.avatarUrl}
+                        alt="Avatar"
                         className="shrink-0 w-9 h-9 rounded-full object-cover bg-border"
                     />
                 ) : (

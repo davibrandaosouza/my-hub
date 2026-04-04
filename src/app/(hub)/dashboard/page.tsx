@@ -13,13 +13,12 @@ import { MemoryUpload } from "@/components/modules/dashboard/MemoryUpload"
 export default function DashboardPage() {
     const { user } = useAuth()
     const { settings } = useSettings()
-    
-    // Custom hook for notes and events
-    const { 
-        events, 
-        notes, 
-        isLoading: dataLoading, 
-        refetch: refetchDashboard 
+
+    const {
+        events,
+        notes,
+        isLoading: dataLoading,
+        refetch: refetchDashboard
     } = useDashboardData(user?.uid)
 
     const firstName = settings.profile.displayName?.split(" ")[0] || "Usuário"
@@ -30,9 +29,9 @@ export default function DashboardPage() {
 
             <div className="p-6 space-y-6">
                 {/* ── BANNER ── */}
-                <DashboardBanner 
-                    firstName={firstName} 
-                    loading={!user} 
+                <DashboardBanner
+                    firstName={firstName}
+                    loading={!user}
                 />
 
                 {/* ── CONTEÚDO PRINCIPAL (ACESSO RÁPIDO + UPLOAD) ── */}
@@ -43,13 +42,13 @@ export default function DashboardPage() {
 
                 {/* ── PRÓXIMOS EVENTOS + NOTAS RECENTES ── */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <UpcomingEvents 
+                    <UpcomingEvents
                         userId={user?.uid || ""}
                         events={events}
                         loading={dataLoading}
                         onUpdate={refetchDashboard}
                     />
-                    <RecentNotes 
+                    <RecentNotes
                         notes={notes}
                         loading={dataLoading}
                     />

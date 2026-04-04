@@ -57,7 +57,7 @@ export function NoteEditor({ note, onSave }: Props) {
     const [showSizePicker, setShowSizePicker] = useState(false)
     const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    // Sync DOM content when the selected note changes
+    // Sincroniza o conteúdo do editor com a nota selecionada
     useEffect(() => {
         if (editorRef.current && !isReadOnly) {
             editorRef.current.innerHTML = note.content || ""
@@ -74,7 +74,7 @@ export function NoteEditor({ note, onSave }: Props) {
         setSaveStatus("idle")
     }
 
-    // ── Selection change listener to highlight buttons ──
+    // Atualiza os estilos ativos
     const updateActiveStyles = useCallback(() => {
         setActiveStyles({
             bold: document.queryCommandState("bold"),
@@ -92,7 +92,7 @@ export function NoteEditor({ note, onSave }: Props) {
         return () => document.removeEventListener("selectionchange", updateActiveStyles)
     }, [updateActiveStyles])
 
-    // ── Auto-save debounce ─────────────────────────
+    // Auto-save debounce
     const triggerSave = useCallback(
         (getUpdates: () => Partial<Note>) => {
             if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
@@ -112,14 +112,13 @@ export function NoteEditor({ note, onSave }: Props) {
         triggerSave(() => ({ content: html, updatedAt: Date.now() }))
     }, [triggerSave])
 
-    // Handle checkbox clicks in contentEditable
+    // Lida com cliques em checkboxes
     useEffect(() => {
         const editor = editorRef.current
         if (!editor) return
 
         const handleClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement
-            // Handle checkbox clicks
             if (target.tagName === "INPUT" && (target as HTMLInputElement).type === "checkbox") {
                 const isChecked = (target as HTMLInputElement).checked
                 if (isChecked) {
@@ -164,7 +163,6 @@ export function NoteEditor({ note, onSave }: Props) {
         triggerSave(() => ({ titulo: val, updatedAt: Date.now() }))
     }
 
-    // ── execCommand helpers ────────────────────────
     const exec = (cmd: string, value?: string) => {
         document.execCommand(cmd, false, value)
         editorRef.current?.focus()
@@ -223,7 +221,6 @@ export function NoteEditor({ note, onSave }: Props) {
         setShowColorPicker(false)
     }
 
-    // ── Save status indicator ──────────────────────
     const statusLabel: Record<SaveStatus, string> = {
         idle: "",
         saving: "Salvando...",
@@ -416,7 +413,7 @@ export function NoteEditor({ note, onSave }: Props) {
                 />
             </div>
 
-            {/* Overlays to close dropdowns */}
+            {/* Overlay para fechar os dropdowns */}
             {(showFontPicker || showColorPicker || showSizePicker) && (
                 <div
                     className="fixed inset-0 z-40"

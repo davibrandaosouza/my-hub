@@ -1,21 +1,21 @@
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
-    FileText, Timer, Tv, Film,
-    MonitorPlay, Gamepad2, RotateCcw,
-    BookHeart, Kanban
+  FileText, Timer, Tv, Film,
+  MonitorPlay, Gamepad2, RotateCcw,
+  BookHeart, Kanban
 } from "lucide-react"
 
 const quickAccessItems = [
-    { label: "Devocionais", description: "Ver devocional", href: "/devocionais", icon: BookHeart },
-    { label: "Planejamentos", description: "Ver tarefas", href: "/planejamentos", icon: Kanban },
-    { label: "Anotações", description: "Ver notas", href: "/anotacoes", icon: FileText },
-    { label: "Pomodoro", description: "Iniciar sessão", href: "/pomodoro", icon: Timer },
-    { label: "Rotinas", description: "Ver hoje", href: "/rotinas", icon: RotateCcw },
-    { label: "Animes", description: "Ver lista", href: "/animes", icon: Tv },
-    { label: "Filmes", description: "Ver lista", href: "/filmes", icon: Film },
-    { label: "Séries", description: "Ver lista", href: "/series", icon: MonitorPlay },
-    { label: "Jogos", description: "Ver lista", href: "/jogos", icon: Gamepad2 },
+  { label: "Devocionais", description: "Ver devocional", href: "/devocionais", icon: BookHeart },
+  { label: "Planejamentos", description: "Ver tarefas", href: "/planejamentos", icon: Kanban },
+  { label: "Anotações", description: "Ver notas", href: "/anotacoes", icon: FileText },
+  { label: "Pomodoro", description: "Iniciar sessão", href: "/pomodoro", icon: Timer },
+  { label: "Rotinas", description: "Ver hoje", href: "/rotinas", icon: RotateCcw },
+  { label: "Animes", description: "Ver lista", href: "/animes", icon: Tv },
+  { label: "Filmes", description: "Ver lista", href: "/filmes", icon: Film },
+  { label: "Séries", description: "Ver lista", href: "/series", icon: MonitorPlay },
+  { label: "Jogos", description: "Ver lista", href: "/jogos", icon: Gamepad2 },
 ]
 
 interface QuickAccessProps {

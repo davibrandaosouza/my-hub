@@ -72,7 +72,7 @@ export default function AnotacoesPage() {
 
     async function handleDeleteNotebook(notebookId: string) {
         if (!userId) return
-        // Remove notebook and its notes optimistically
+        // Remove notebook e suas notas
         setNotebooks(prev => prev.filter(n => n.id !== notebookId))
         setNotes(prev => prev.filter(n => n.notebookId !== notebookId))
         if (selectedNote?.notebookId === notebookId) setSelectedNote(null)
@@ -84,7 +84,7 @@ export default function AnotacoesPage() {
         }
     }
 
-    // ── Notes CRUD ─────────────────────────────────
+    // ── Notas CRUD ─────────────────────────────────
     async function handleNewNote(notebookId: string) {
         if (!userId) return
         const now = Date.now()
@@ -128,7 +128,6 @@ export default function AnotacoesPage() {
             if (!userId || !selectedNote) return
             const updated: Note = { ...selectedNote, ...updates, updatedAt: Date.now() }
 
-            // Update local state
             setSelectedNote(updated)
             setNotes(prev => prev.map(n => n.id === updated.id ? updated : n))
 
@@ -138,7 +137,7 @@ export default function AnotacoesPage() {
         [userId, selectedNote, toast]
     )
 
-    // ── First notebook → open first note ──────────
+    // Primeiro caderno → abrir primeira nota
     function handleFirstNote() {
         if (notebooks.length > 0) {
             void handleNewNote(notebooks[0].id)

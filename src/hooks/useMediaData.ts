@@ -40,14 +40,13 @@ export function useMediaData<T extends { id: string }>(
 
     // Mutation para atualizar
     const updateMutation = useMutation({
-        mutationFn: ({ id, updates }: { id: string; updates: Partial<T> }) => 
+        mutationFn: ({ id, updates }: { id: string; updates: Partial<T> }) =>
             service.update(id, updates),
         onSuccess: (res) => {
             if (res.error) {
                 toast.error(res.error)
             } else {
                 queryClient.invalidateQueries({ queryKey })
-                // toast.success("Atualizado!") // Evitar spam de toast em atualizações rápidas
             }
         },
         onError: () => toast.error("Erro ao atualizar.")

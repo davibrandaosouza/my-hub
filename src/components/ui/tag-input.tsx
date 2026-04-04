@@ -57,7 +57,7 @@ export function TagInput({ value, onChange, suggestions, placeholder, disabled, 
                             key={s}
                             type="button"
                             onMouseDown={(e) => {
-                                e.preventDefault() // evita blur antes do click
+                                e.preventDefault() // Evita blur antes do click
                                 onChange(s)
                                 setOpen(false)
                             }}

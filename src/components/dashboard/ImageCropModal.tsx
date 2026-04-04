@@ -103,7 +103,7 @@ export function ImageCropModal({ image, onClose, onCropComplete }: ImageCropModa
             image={image}
             crop={crop}
             zoom={zoom}
-            aspect={1} // Square aspect ratio for profile and dashboard images
+            aspect={1}
             onCropChange={onCropChange}
             onCropComplete={onCropCompleteInternal}
             onZoomChange={onZoomChange}

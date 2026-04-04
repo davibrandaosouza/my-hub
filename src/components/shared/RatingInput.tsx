@@ -39,14 +39,14 @@ export function RatingInput({ value, onChange, className }: Props) {
             onChange(null)
             return
         }
-        
+
         let decimal = sliderVal
         if (format === "stars") decimal = sliderVal * 2
         if (format === "emojis") {
             const emojiMap = { 1: 2, 2: 5, 3: 9 }
             decimal = emojiMap[sliderVal as keyof typeof emojiMap] || 5
         }
-        
+
         onChange(decimal)
     }
 
@@ -56,7 +56,6 @@ export function RatingInput({ value, onChange, className }: Props) {
 
     return (
         <div className={cn("space-y-4", className)}>
-            {/* Visual Display based on Format */}
             <div className="flex items-center justify-center min-h-[60px] p-4 rounded-2xl bg-black/20 border border-white/5 shadow-inner">
                 {value === null ? (
                     <span className="text-sm text-muted italic">Mova o slider abaixo para avaliar</span>
@@ -65,14 +64,14 @@ export function RatingInput({ value, onChange, className }: Props) {
                         {format === "stars" && (
                             <div className="flex items-center gap-1.5">
                                 {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star 
+                                    <Star
                                         key={star}
                                         className={cn(
                                             "w-7 h-7 transition-all",
-                                            star <= (mappedValue as number) 
-                                                ? "fill-yellow-400 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]" 
+                                            star <= (mappedValue as number)
+                                                ? "fill-yellow-400 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]"
                                                 : "text-white/10 fill-transparent"
-                                        )} 
+                                        )}
                                     />
                                 ))}
                             </div>
@@ -107,29 +106,29 @@ export function RatingInput({ value, onChange, className }: Props) {
                 )}
             </div>
 
-            {/* Unified Slider Input */}
+            {/* Slider Input Unificado */}
             <div className="space-y-2">
-                <RatingSlider 
-                    value={sliderValue} 
-                    onChange={handleSliderChange} 
+                <RatingSlider
+                    value={sliderValue}
+                    onChange={handleSliderChange}
                     min={sliderProps.min}
                     max={sliderProps.max}
                     step={sliderProps.step}
                 />
-                
+
                 <div className="flex justify-between items-center px-1">
-                     {value !== null && format !== "default" && (
+                    {value !== null && format !== "default" && (
                         <p className="text-[10px] text-muted italic">
                             Sistema decimal: {value.toFixed(1)}
                         </p>
                     )}
-                    
+
                     {value !== null && (
-                        <button 
+                        <button
                             onClick={() => onChange(null)}
                             className="text-[11px] font-medium text-muted hover:text-red-400 transition-colors flex items-center gap-1.5 ml-auto group"
                         >
-                            <X className="w-3.5 h-3.5 transition-transform group-hover:scale-110" /> 
+                            <X className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
                             Remover nota
                         </button>
                     )}

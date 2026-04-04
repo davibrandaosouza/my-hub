@@ -14,8 +14,8 @@ export function useDashboardData(userId: string | undefined) {
   const notesQuery = useQuery({
     queryKey: ["dashboard", "notes", userId],
     queryFn: async () => {
-        const notes = await getNotes(userId!)
-        return notes.slice(0, 5) // Last 5 notes as planned
+      const notes = await getNotes(userId!)
+      return notes.slice(0, 5)
     },
     enabled: !!userId,
   })
@@ -26,7 +26,7 @@ export function useDashboardData(userId: string | undefined) {
     isLoading: eventsQuery.isLoading || notesQuery.isLoading,
     isError: eventsQuery.isError || notesQuery.isError,
     refetch: async () => {
-        await Promise.all([eventsQuery.refetch(), notesQuery.refetch()])
+      await Promise.all([eventsQuery.refetch(), notesQuery.refetch()])
     }
   }
 }

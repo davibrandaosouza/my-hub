@@ -7,8 +7,8 @@ interface SettingsState {
   settings: UserSettings
   loading: boolean
   error: string | null
-  
-  // Actions
+
+  // Ações
   loadSettings: (userId: string) => Promise<void>
   updateSettings: (userId: string, partial: Partial<UserSettings>) => Promise<void>
   updateProfile: (userId: string, profile: Partial<UserSettings["profile"]>) => Promise<void>
@@ -30,12 +30,10 @@ export const useSettings = create<SettingsState>()(
         set({ loading: true, error: null })
         try {
           const fbSettings = await getUserSettings(userId)
-          // Ensure deep merge mapping
           set({
             settings: {
               ...DEFAULT_USER_SETTINGS,
               ...fbSettings,
-              // deep merge explicitly for nested objects to prevent overrides by incomplete firebase docs
               profile: { ...DEFAULT_USER_SETTINGS.profile, ...(fbSettings.profile || {}) },
               appearance: { ...DEFAULT_USER_SETTINGS.appearance, ...(fbSettings.appearance || {}) },
               pomodoro: { ...DEFAULT_USER_SETTINGS.pomodoro, ...(fbSettings.pomodoro || {}) },
@@ -53,14 +51,12 @@ export const useSettings = create<SettingsState>()(
       updateSettings: async (userId: string, partial: Partial<UserSettings>) => {
         const current = get().settings
         const newSettings = { ...current, ...partial }
-        
-        // Optimistic UI update
+
+        // UI Otimista
         set({ settings: newSettings })
-        
-        // Save to Firebase
+
         const { error } = await saveUserSettings(userId, partial)
         if (error) {
-          // Revert on error (optional)
           set({ settings: current, error })
         }
       },
@@ -88,7 +84,7 @@ export const useSettings = create<SettingsState>()(
         const newBehavior = { ...current.behavior, ...behavior }
         await get().updateSettings(userId, { behavior: newBehavior })
       },
-      
+
       updateEntertainment: async (userId: string, entertainment) => {
         const current = get().settings
         const newEntertainment = { ...current.entertainment, ...entertainment }
@@ -101,7 +97,6 @@ export const useSettings = create<SettingsState>()(
     }),
     {
       name: "hub-settings-storage",
-      // Omit loading state from persist to ensure we fetch fresh on reload
       partialize: (state) => ({ settings: state.settings }),
     }
   )

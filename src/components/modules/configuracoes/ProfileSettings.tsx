@@ -6,7 +6,6 @@ import { useSettings } from "@/hooks/useSettings"
 import { User, UploadCloud } from "lucide-react"
 import { ImageCropModal } from "@/components/dashboard/ImageCropModal"
 import { useToastContext } from "@/app/(hub)/layout"
-// Utilizaremos o mesmo server action do dashboard por praticidade no Vercel Blob
 import { uploadDashboardImageAction } from "@/app/actions/dashboard"
 import { MyHubLogo } from "@/components/shared/MyHubLogo"
 
@@ -17,7 +16,7 @@ export function ProfileSettings() {
 
     const [isEditingName, setIsEditingName] = useState(false)
     const [nameInput, setNameInput] = useState(settings.profile.displayName)
-    
+
     const [selectedFile, setSelectedFile] = useState<string | null>(null)
     const [isCropModalOpen, setIsCropModalOpen] = useState(false)
     const [uploading, setUploading] = useState(false)
@@ -57,8 +56,6 @@ export function ProfileSettings() {
             const file = new File([croppedBlob], "avatar.jpg", { type: "image/jpeg" })
             formData.append("file", file)
 
-            // Usa server action para upload no Vercel Blob
-            // Passamos a URL atual se existir para deletar a antiga
             const url = await uploadDashboardImageAction(user.uid, formData, settings.profile.avatarUrl)
 
             await updateProfile(user.uid, { avatarUrl: url })
@@ -80,21 +77,21 @@ export function ProfileSettings() {
             </div>
 
             <div className="flex items-center gap-6 mb-6">
-                <div 
+                <div
                     onClick={() => !uploading && fileInputRef.current?.click()}
                     className={`relative w-20 h-20 rounded-xl overflow-hidden group border-2 border-dashed shrink-0 ${uploading ? 'border-primary opacity-50 cursor-not-allowed' : 'border-border cursor-pointer hover:border-primary/50'}`}
                 >
                     {settings.profile.avatarUrl ? (
-                         // eslint-disable-next-line @next/next/no-img-element
-                        <img 
-                            src={settings.profile.avatarUrl} 
-                            alt="Avatar" 
-                            className="w-full h-full object-cover transition-transform group-hover:scale-105" 
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={settings.profile.avatarUrl}
+                            alt="Avatar"
+                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         />
                     ) : (
                         <MyHubLogo className="w-full h-full text-3xl shadow-none" />
                     )}
-                    
+
                     {!uploading && (
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <UploadCloud className="w-6 h-6 text-foreground" />
@@ -106,7 +103,7 @@ export function ProfileSettings() {
                         </div>
                     )}
                 </div>
-                
+
                 <div className="flex-1">
                     <h3 className="text-lg font-bold text-foreground">{settings.profile.displayName || "MyHub"}</h3>
                     <p className="text-sm text-muted">{user?.email}</p>
@@ -134,14 +131,14 @@ export function ProfileSettings() {
                             className={`flex-1 bg-background border rounded-lg px-4 py-2 text-sm text-foreground focus:outline-none focus:border-primary transition-colors ${!isEditingName ? 'border-border opacity-70' : 'border-primary/30'}`}
                         />
                         {isEditingName ? (
-                            <button 
+                            <button
                                 onClick={handleSaveName}
                                 className="px-4 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg transition-colors"
                             >
                                 Salvar
                             </button>
                         ) : (
-                            <button 
+                            <button
                                 onClick={() => setIsEditingName(true)}
                                 className="px-4 py-2 bg-foreground/5 hover:bg-foreground/10 text-foreground text-sm font-medium rounded-lg transition-colors border border-border"
                             >

@@ -13,8 +13,6 @@ export function PomodoroSettingsBlock() {
     const handlePomodoroChange = async (type: "workTime" | "breakTime", value: string) => {
         if (!user?.uid) return
         const numValue = parseInt(value, 10)
-        
-        // Validação simples
         if (isNaN(numValue) || numValue < 1 || numValue > 120) {
             toast.error("O tempo deve estar entre 1 e 120 minutos.")
             return
@@ -54,7 +52,7 @@ export function PomodoroSettingsBlock() {
                     />
                 </div>
             </div>
-            
+
             <p className="text-xs text-muted mt-4">
                 Lembre-se: mudar os tempos padrões entra em vigor para as próximas sessões, e não para as que já estão ativas.
             </p>

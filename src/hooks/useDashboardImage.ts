@@ -20,14 +20,14 @@ export function useDashboardImage(userId: string | undefined) {
     const uploadMutation = useMutation({
         mutationFn: async ({ formData, currentUrl }: { formData: FormData; currentUrl: string | null }) => {
             if (!userId) throw new Error("Usuário não autenticado")
-            
-            // 1. Upload para Vercel Blob via Server Action
+
+            // Upload para Vercel Blob via Server Action
             const url = await uploadDashboardImageAction(userId, formData, currentUrl)
-            
-            // 2. Salvar no Firestore
+
+            // Salvar no Firestore
             const userDocRef = doc(db, "dashboard", userId)
             await setDoc(userDocRef, { imageUrl: url }, { merge: true })
-            
+
             return url
         },
         onSuccess: (url) => {
@@ -44,11 +44,11 @@ export function useDashboardImage(userId: string | undefined) {
     const deleteMutation = useMutation({
         mutationFn: async (currentUrl: string) => {
             if (!userId) throw new Error("Usuário não autenticado")
-            
-            // 1. Deletar do Vercel Blob
+
+            // Deletar do Vercel Blob
             await deleteDashboardImageAction(currentUrl)
-            
-            // 2. Limpar no Firestore
+
+            // Limpar no Firestore
             const userDocRef = doc(db, "dashboard", userId)
             await setDoc(userDocRef, { imageUrl: null }, { merge: true })
         },

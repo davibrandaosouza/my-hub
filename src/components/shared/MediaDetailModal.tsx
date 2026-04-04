@@ -30,13 +30,13 @@ type Props<TStatus extends string> = {
     onUpdate: (id: string, updates: { nota: number | null; status: TStatus }) => Promise<void>
 }
 
-export function MediaDetailModal<TStatus extends string>({ 
-    data, 
-    statusOptions, 
-    fallbackIcon = "🎮", 
-    onClose, 
-    onDelete, 
-    onUpdate 
+export function MediaDetailModal<TStatus extends string>({
+    data,
+    statusOptions,
+    fallbackIcon = "🎮",
+    onClose,
+    onDelete,
+    onUpdate
 }: Props<TStatus>) {
     const [notaInput, setNotaInput] = useState<number | null>(data?.nota ?? null)
     const [statusInput, setStatusInput] = useState<TStatus | "">(data?.status ?? "")

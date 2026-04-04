@@ -13,9 +13,9 @@ export interface Task {
 }
 
 interface PomodoroSettings {
-    focusDuration: number // in minutes
+    focusDuration: number
     breakDuration: number
-    sessionsUntilLongBreak: number // Still used to track cycle reset
+    sessionsUntilLongBreak: number
 }
 
 interface PomodoroStats {
@@ -26,37 +26,37 @@ interface PomodoroStats {
 }
 
 interface PomodoroState {
-    // Timer State
+    // Timer
     mode: PomodoroMode
     status: "idle" | "running" | "paused"
-    timeLeft: number // in seconds
-    sessionsInCycle: number // resets after long break or goal reached
-    
-    // Tasks State
+    timeLeft: number // Segundos
+    sessionsInCycle: number
+
+    // Tasks
     tasks: Task[]
     activeTaskId: string | null
-    
+
     // Settings
     settings: PomodoroSettings
-    
+
     // Stats
     stats: PomodoroStats
-    
+
     // Actions
     startTimer: () => void
     pauseTimer: () => void
     resetTimer: () => void
     skipSession: () => void
     tick: () => void
-    
+
     setSettings: (settings: Partial<PomodoroSettings>) => void
     setMode: (mode: PomodoroMode) => void
-    
+
     addTask: (text: string) => void
     removeTask: (id: string) => void
     toggleTask: (id: string) => void
     setActiveTask: (id: string | null) => void
-    
+
     updateStats: (focusMinutes: number) => void
 }
 
@@ -87,7 +87,7 @@ export const usePomodoroStore = create<PomodoroState>()(
 
             startTimer: () => set({ status: "running" }),
             pauseTimer: () => set({ status: "paused" }),
-            
+
             resetTimer: () => {
                 const { mode, settings } = get()
                 const duration = mode === "focus" ? settings.focusDuration : settings.breakDuration
@@ -109,8 +109,8 @@ export const usePomodoroStore = create<PomodoroState>()(
                     nextMode = "focus"
                 }
 
-                const nextDuration = nextMode === "focus" 
-                    ? settings.focusDuration 
+                const nextDuration = nextMode === "focus"
+                    ? settings.focusDuration
                     : settings.breakDuration
 
                 set({
@@ -128,7 +128,6 @@ export const usePomodoroStore = create<PomodoroState>()(
                 if (timeLeft > 0) {
                     set({ timeLeft: timeLeft - 1 })
                 } else {
-                    // Timer finished
                     let nextMode: PomodoroMode = "focus"
                     let nextSessionsInCycle = sessionsInCycle
 
@@ -143,15 +142,15 @@ export const usePomodoroStore = create<PomodoroState>()(
                         nextMode = "focus"
                     }
 
-                    const nextDuration = nextMode === "focus" 
-                        ? settings.focusDuration 
+                    const nextDuration = nextMode === "focus"
+                        ? settings.focusDuration
                         : settings.breakDuration
 
                     set({
                         mode: nextMode,
                         sessionsInCycle: nextSessionsInCycle,
                         timeLeft: nextDuration * 60,
-                        status: "running" // Auto-start next session
+                        status: "running"
                     })
                 }
             },
@@ -159,7 +158,7 @@ export const usePomodoroStore = create<PomodoroState>()(
             setSettings: (newSettings) => {
                 const updatedSettings = { ...get().settings, ...newSettings }
                 set({ settings: updatedSettings })
-                // If idle, update timeLeft to match new duration
+                // Se estiver parado, atualiza o tempo
                 if (get().status === "idle") {
                     const { mode } = get()
                     const duration = mode === "focus" ? updatedSettings.focusDuration : updatedSettings.breakDuration
@@ -186,12 +185,12 @@ export const usePomodoroStore = create<PomodoroState>()(
             })),
 
             toggleTask: (id) => set((state) => {
-                const newTasks = state.tasks.map(t => 
+                const newTasks = state.tasks.map(t =>
                     t.id === id ? { ...t, completed: !t.completed } : t
                 )
                 const completedCount = newTasks.filter(t => t.completed).length
                 const oldCompletedCount = state.tasks.filter(t => t.completed).length
-                
+
                 return {
                     tasks: newTasks,
                     stats: {
@@ -206,7 +205,7 @@ export const usePomodoroStore = create<PomodoroState>()(
             updateStats: (focusMinutes) => set((state) => {
                 const today = getTodayStr()
                 const resetStats = state.stats.lastUpdated !== today
-                
+
                 return {
                     stats: {
                         totalFocusMinutes: (resetStats ? 0 : state.stats.totalFocusMinutes) + focusMinutes,
