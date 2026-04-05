@@ -8,6 +8,7 @@ export interface Serie {
     categoria: string
     status: SerieStatus
     nota: number | null
+    anoLancamento: number | null
     userId: string
     createdAt: number
     updatedAt: number

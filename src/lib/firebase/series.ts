@@ -35,17 +35,26 @@ export async function addSerie(
     data: Omit<Serie, "id" | "userId" | "createdAt" | "updatedAt">
 ): Promise<{ id: string | null; error: string | null }> {
     try {
-        const ref = await addDoc(collection(db, "series"), {
+        // Verificar duplicata
+        const ref = collection(db, "series")
+        const dupQ = query(ref, where("userId", "==", userId), where("apiId", "==", data.apiId))
+        const dupSnap = await getDocs(dupQ)
+        if (!dupSnap.empty) {
+            return { id: null, error: "Esta série já está na sua lista!" }
+        }
+
+        const docRef = await addDoc(collection(db, "series"), {
             ...data,
             userId,
             createdAt: Date.now(),
             updatedAt: Date.now(),
         })
-        return { id: ref.id, error: null }
+        return { id: docRef.id, error: null }
     } catch {
         return { id: null, error: "Erro ao adicionar série." }
     }
 }
+
 
 export async function updateSerie(
     id: string,

@@ -11,6 +11,7 @@ export type MediaSearchResult = {
     titulo: string
     coverUrl: string
     categoria: string
+    anoLancamento?: number | null
 }
 
 export type StatusOption<TStatus extends string> = {
@@ -35,6 +36,7 @@ type Props<TStatus extends string> = {
         categoria: string
         status: TStatus
         nota: number | null
+        anoLancamento?: number | null
     }) => Promise<void>
 }
 
@@ -105,9 +107,10 @@ export function MediaAddModal<TStatus extends string>({
             categoria: selected.categoria,
             status,
             nota,
+            anoLancamento: selected.anoLancamento ?? null,
         })
         setSaving(false)
-        reset() // Optional: depends on if the parent handles closing, but standard to reset.
+        reset()
     }
 
     return (

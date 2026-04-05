@@ -5,6 +5,7 @@ export type AnimeResult = {
     titulo: string;
     capaUrl: string;
     categoria: string;
+    anoLancamento: number | null;
 }
 
 export async function searchAnimes(query: string): Promise<AnimeResult[]> {
@@ -18,7 +19,8 @@ export async function searchAnimes(query: string): Promise<AnimeResult[]> {
             apiId: String(item.mal_id),
             titulo: item.title_english || item.title,
             capaUrl: item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || "",
-            categoria: item.genres?.[0]?.name || "Anime"
+            categoria: item.genres?.[0]?.name || "Anime",
+            anoLancamento: item.aired?.from ? new Date(item.aired.from).getFullYear() : null,
         }))
     } catch {
         return []

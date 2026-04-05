@@ -8,6 +8,7 @@ export interface Anime {
     categoria: string
     status: AnimeStatus
     nota: number | null
+    anoLancamento: number | null
     userId: string
     createdAt: number
     updatedAt: number
@@ -28,6 +29,9 @@ export type JikanAnimeResponse = {
     genres?: Array<{
         name: string;
     }>;
+    aired?: {
+        from?: string | null;
+    };
 }
 
 export type JikanSearchResponse = {

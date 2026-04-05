@@ -35,17 +35,26 @@ export async function addFilme(
     data: Omit<Filme, "id" | "userId" | "createdAt" | "updatedAt">
 ): Promise<{ id: string | null; error: string | null }> {
     try {
-        const ref = await addDoc(collection(db, "filmes"), {
+        // Verificar duplicata
+        const ref = collection(db, "filmes")
+        const dupQ = query(ref, where("userId", "==", userId), where("apiId", "==", data.apiId))
+        const dupSnap = await getDocs(dupQ)
+        if (!dupSnap.empty) {
+            return { id: null, error: "Este filme já está na sua lista!" }
+        }
+
+        const docRef = await addDoc(collection(db, "filmes"), {
             ...data,
             userId,
             createdAt: Date.now(),
             updatedAt: Date.now(),
         })
-        return { id: ref.id, error: null }
+        return { id: docRef.id, error: null }
     } catch {
         return { id: null, error: "Erro ao adicionar filme." }
     }
 }
+
 
 export async function updateFilme(
     id: string,

@@ -2,9 +2,10 @@
 "use client"
 
 import { useState } from "react"
-import { X, Star, Tag, Trash2, Save } from "lucide-react"
+import { X, Star, Tag, Trash2, Save, FolderPlus, Folder, Check, Plus, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { RatingInput } from "@/components/shared/RatingInput"
+import type { Colecao } from "@/types/colecao"
 
 export type DetailModalData<TStatus extends string> = {
     id: string
@@ -25,6 +26,11 @@ type Props<TStatus extends string> = {
     data: DetailModalData<TStatus> | null
     statusOptions: StatusOption<TStatus>[]
     fallbackIcon?: React.ReactNode
+    // Coleções
+    colecoes?: Colecao[]
+    onAddToColecao?: (colecaoId: string) => Promise<void>
+    onRemoveFromColecao?: (colecaoId: string) => Promise<void>
+    onCreateColecao?: () => void
     onClose: () => void
     onDelete: (id: string) => void
     onUpdate: (id: string, updates: { nota: number | null; status: TStatus }) => Promise<void>
@@ -34,6 +40,10 @@ export function MediaDetailModal<TStatus extends string>({
     data,
     statusOptions,
     fallbackIcon = "🎮",
+    colecoes = [],
+    onAddToColecao,
+    onRemoveFromColecao,
+    onCreateColecao,
     onClose,
     onDelete,
     onUpdate
@@ -42,6 +52,9 @@ export function MediaDetailModal<TStatus extends string>({
     const [statusInput, setStatusInput] = useState<TStatus | "">(data?.status ?? "")
     const [savingNota, setSavingNota] = useState(false)
     const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
+    const [colecaoLoading, setColecaoLoading] = useState<string | null>(null)
+    const [showColecoes, setShowColecoes] = useState(false)
+    const [buscaColecao, setBuscaColecao] = useState("")
 
     if (!data) return null
 
@@ -53,6 +66,20 @@ export function MediaDetailModal<TStatus extends string>({
             setSavingNota(false)
         }
         onClose()
+    }
+
+    const handleColecaoToggle = async (colecao: Colecao) => {
+        const isIn = colecao.itemIds.includes(data.id)
+        setColecaoLoading(colecao.id)
+        try {
+            if (isIn) {
+                await onRemoveFromColecao?.(colecao.id)
+            } else {
+                await onAddToColecao?.(colecao.id)
+            }
+        } finally {
+            setColecaoLoading(null)
+        }
     }
 
     return (
@@ -128,6 +155,115 @@ export function MediaDetailModal<TStatus extends string>({
                             ))}
                         </div>
                     </div>
+
+                    {/* Seção de Coleções */}
+                    {(colecoes.length > 0 || onCreateColecao) && (
+                        <div className="flex flex-col gap-2.5">
+                            <button
+                                onClick={() => setShowColecoes(o => !o)}
+                                className="flex items-center gap-2 text-sm text-muted font-medium hover:text-foreground transition-colors w-fit"
+                            >
+                                <FolderPlus className="w-4 h-4" />
+                                Adicionar a uma coleção
+                                <span className={cn(
+                                    "text-[10px] px-1.5 py-0.5 rounded-full border transition-all",
+                                    showColecoes
+                                        ? "bg-primary/10 text-primary border-primary/30"
+                                        : "bg-foreground/5 border-border"
+                                )}>
+                                    {colecoes.filter(c => c.itemIds.includes(data.id)).length}/{colecoes.length}
+                                </span>
+                            </button>
+
+                            {showColecoes && (
+                                <div className="rounded-xl border border-border bg-background overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                                    {/* Campo de busca */}
+                                    <div className="p-2 border-b border-border">
+                                        <div className="relative">
+                                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted pointer-events-none" />
+                                            <input
+                                                value={buscaColecao}
+                                                onChange={e => setBuscaColecao(e.target.value)}
+                                                placeholder="Buscar coleção..."
+                                                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-foreground/5 border border-border text-xs text-foreground placeholder:text-muted focus:outline-none focus:border-primary/50 transition-colors"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Lista com scroll */}
+                                    <div className="max-h-48 overflow-y-auto custom-scrollbar">
+                                        {(() => {
+                                            const filtered = colecoes
+                                                .filter(c => c.nome.toLowerCase().includes(buscaColecao.toLowerCase()))
+                                                // Coleções que já contêm o item aparecem primeiro
+                                                .sort((a, b) => {
+                                                    const aIn = a.itemIds.includes(data.id) ? 0 : 1
+                                                    const bIn = b.itemIds.includes(data.id) ? 0 : 1
+                                                    return aIn - bIn
+                                                })
+
+                                            if (filtered.length === 0) {
+                                                return (
+                                                    <div className="py-6 text-center text-xs text-muted">
+                                                        Nenhuma coleção encontrada
+                                                    </div>
+                                                )
+                                            }
+
+                                            return filtered.map(colecao => {
+                                                const isIn = colecao.itemIds.includes(data.id)
+                                                const isLoading = colecaoLoading === colecao.id
+                                                return (
+                                                    <button
+                                                        key={colecao.id}
+                                                        onClick={() => handleColecaoToggle(colecao)}
+                                                        disabled={isLoading}
+                                                        className={cn(
+                                                            "flex items-center gap-3 w-full px-4 py-3 transition-colors text-left border-b border-border/50 last:border-b-0",
+                                                            isIn
+                                                                ? "bg-primary/5"
+                                                                : "hover:bg-foreground/5"
+                                                        )}
+                                                    >
+                                                        <Folder className={cn("w-4 h-4 shrink-0", isIn ? "text-primary" : "text-muted")} />
+                                                        <span className={cn(
+                                                            "flex-1 text-sm",
+                                                            isIn ? "text-foreground font-medium" : "text-muted"
+                                                        )}>
+                                                            {colecao.nome}
+                                                        </span>
+                                                        <span className="text-xs text-muted/60 shrink-0">
+                                                            {colecao.itemIds.length} itens
+                                                        </span>
+                                                        {isLoading ? (
+                                                            <div className="w-4 h-4 rounded-full border-2 border-primary border-t-transparent animate-spin shrink-0" />
+                                                        ) : (
+                                                            <div className={cn(
+                                                                "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all",
+                                                                isIn ? "bg-primary border-primary" : "border-border"
+                                                            )}>
+                                                                {isIn && <Check className="w-3 h-3 text-white" />}
+                                                            </div>
+                                                        )}
+                                                    </button>
+                                                )
+                                            })
+                                        })()}
+                                    </div>
+
+                                    {onCreateColecao && (
+                                        <button
+                                            onClick={onCreateColecao}
+                                            className="flex items-center gap-3 w-full px-4 py-3 text-left text-primary hover:bg-primary/5 transition-colors border-t border-border"
+                                        >
+                                            <Plus className="w-4 h-4 shrink-0" />
+                                            <span className="text-sm font-medium">Nova coleção</span>
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     <div className="pt-2 flex gap-3">
                         <button

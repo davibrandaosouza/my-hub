@@ -4,6 +4,14 @@ import type { RawgGame, RawgSearchResponse } from "@/types/jogo"
 
 const BASE_URL = "https://api.rawg.io/api"
 
+export type RawgResult = {
+    apiId: string
+    titulo: string
+    coverUrl: string
+    categoria: string
+    anoLancamento: number | null
+}
+
 export async function searchGames(query: string): Promise<RawgGame[]> {
     if (!query.trim()) return []
     try {

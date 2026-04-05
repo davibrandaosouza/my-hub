@@ -8,6 +8,7 @@ export interface Filme {
     categoria: string
     status: FilmeStatus
     nota: number | null
+    anoLancamento: number | null
     userId: string
     createdAt: number
     updatedAt: number
@@ -19,6 +20,8 @@ export type TMDBMovieResponse = {
     name?: string;
     poster_path: string | null;
     genre_ids?: number[];
+    release_date?: string;
+    first_air_date?: string;
 }
 
 export type TMDBSearchResponse = {

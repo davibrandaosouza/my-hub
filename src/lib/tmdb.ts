@@ -7,6 +7,7 @@ export type TMDBResult = {
     titulo: string;
     capaUrl: string;
     categoria: string;
+    anoLancamento: number | null;
 }
 
 const GENRE_MAP: Record<number, string> = {
@@ -16,6 +17,12 @@ const GENRE_MAP: Record<number, string> = {
     10770: "Cinema TV", 53: "Thriller", 10752: "Guerra", 37: "Faroeste",
     10759: "Ação/Aventura", 10762: "Kids", 10765: "Sci-Fi/Fants", 10766: "Novela",
     10767: "Talk Show", 10768: "Política"
+}
+
+function parseYear(dateStr?: string | null): number | null {
+    if (!dateStr) return null
+    const year = new Date(dateStr).getFullYear()
+    return isNaN(year) ? null : year
 }
 
 async function fetchFromTMDB(endpoint: "movie" | "tv", query: string, defaultCategory: string): Promise<TMDBResult[]> {
@@ -40,7 +47,10 @@ async function fetchFromTMDB(endpoint: "movie" | "tv", query: string, defaultCat
             apiId: String(item.id),
             titulo: item.title || item.name || "",
             capaUrl: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "",
-            categoria: item.genre_ids?.[0] ? GENRE_MAP[item.genre_ids[0]] || defaultCategory : defaultCategory
+            categoria: item.genre_ids?.[0] ? GENRE_MAP[item.genre_ids[0]] || defaultCategory : defaultCategory,
+            anoLancamento: endpoint === "movie"
+                ? parseYear(item.release_date)
+                : parseYear(item.first_air_date),
         }))
     } catch (error) {
         console.error(`Error fetching from TMDB ${endpoint}:`, error)

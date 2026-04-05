@@ -17,7 +17,7 @@ type Props<T extends string> = {
 
 export function MediaStatsBar<T extends string>({ options, counts, active, onChange }: Props<T>) {
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {options.map(({ key, label, icon: Icon }) => {
                 const isActive = active === key
                 return (

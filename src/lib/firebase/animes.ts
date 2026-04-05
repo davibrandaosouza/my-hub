@@ -35,17 +35,26 @@ export async function addAnime(
     data: Omit<Anime, "id" | "userId" | "createdAt" | "updatedAt">
 ): Promise<{ id: string | null; error: string | null }> {
     try {
-        const ref = await addDoc(collection(db, "animes"), {
+        // Verificar duplicata
+        const ref = collection(db, "animes")
+        const dupQ = query(ref, where("userId", "==", userId), where("apiId", "==", data.apiId))
+        const dupSnap = await getDocs(dupQ)
+        if (!dupSnap.empty) {
+            return { id: null, error: "Este anime já está na sua lista!" }
+        }
+
+        const docRef = await addDoc(collection(db, "animes"), {
             ...data,
             userId,
             createdAt: Date.now(),
             updatedAt: Date.now(),
         })
-        return { id: ref.id, error: null }
+        return { id: docRef.id, error: null }
     } catch {
         return { id: null, error: "Erro ao adicionar anime." }
     }
 }
+
 
 export async function updateAnime(
     id: string,

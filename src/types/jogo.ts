@@ -9,6 +9,7 @@ export type Jogo = {
     categoria: string
     status: JogoStatus
     nota: number | null
+    anoLancamento: number | null
     createdAt: number
     updatedAt: number
 }
@@ -18,6 +19,7 @@ export type RawgGame = {
     name: string
     background_image: string | null
     genres: { id: number; name: string }[]
+    released: string | null
 }
 
 export type RawgSearchResponse = {
