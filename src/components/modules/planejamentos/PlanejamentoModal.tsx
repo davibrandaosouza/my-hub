@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useForm, useWatch } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Calendar, Loader2 } from "lucide-react"
 import { Modal } from "@/components/ui/modal"
@@ -22,7 +22,6 @@ type Props = {
 
 export function PlanejamentoModal({ open, onClose, onSave, editingItem, categoriaSugestoes }: Props) {
     const {
-        register,
         handleSubmit,
         reset,
         control,
@@ -83,9 +82,15 @@ export function PlanejamentoModal({ open, onClose, onSave, editingItem, categori
                     <label className="text-xs font-medium text-muted uppercase tracking-wider">
                         Título
                     </label>
-                    <Input
-                        placeholder="Ex: Criar landing page"
-                        {...register("titulo")}
+                    <Controller
+                        control={control}
+                        name="titulo"
+                        render={({ field }) => (
+                            <Input
+                                placeholder="Ex: Criar landing page"
+                                {...field}
+                            />
+                        )}
                     />
                     {errors.titulo && (
                         <p className="text-xs text-red-400">{errors.titulo.message}</p>
@@ -97,11 +102,17 @@ export function PlanejamentoModal({ open, onClose, onSave, editingItem, categori
                     <label className="text-xs font-medium text-muted uppercase tracking-wider">
                         Descrição <span className="normal-case text-muted/60">(opcional)</span>
                     </label>
-                    <textarea
-                        placeholder="Detalhes do plano..."
-                        rows={3}
-                        className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary resize-none"
-                        {...register("descricao")}
+                    <Controller
+                        control={control}
+                        name="descricao"
+                        render={({ field }) => (
+                            <textarea
+                                placeholder="Detalhes do plano..."
+                                rows={3}
+                                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary resize-none"
+                                {...field}
+                            />
+                        )}
                     />
                 </div>
 
@@ -111,26 +122,38 @@ export function PlanejamentoModal({ open, onClose, onSave, editingItem, categori
                         <label className="text-xs font-medium text-muted uppercase tracking-wider">
                             Prioridade
                         </label>
-                        <Select
-                            options={[
-                                { value: "alta", label: "Alta" },
-                                { value: "media", label: "Média" },
-                                { value: "baixa", label: "Baixa" },
-                            ]}
-                            {...register("prioridade")}
+                        <Controller
+                            control={control}
+                            name="prioridade"
+                            render={({ field }) => (
+                                <Select
+                                    options={[
+                                        { value: "alta", label: "Alta" },
+                                        { value: "media", label: "Média" },
+                                        { value: "baixa", label: "Baixa" },
+                                    ]}
+                                    {...field}
+                                />
+                            )}
                         />
                     </div>
                     <div className="space-y-1.5">
                         <label className="text-xs font-medium text-muted uppercase tracking-wider">
                             Status
                         </label>
-                        <Select
-                            options={[
-                                { value: "pendente", label: "Pendente" },
-                                { value: "em_progresso", label: "Em Progresso" },
-                                { value: "concluido", label: "Concluído" },
-                            ]}
-                            {...register("status")}
+                        <Controller
+                            control={control}
+                            name="status"
+                            render={({ field }) => (
+                                <Select
+                                    options={[
+                                        { value: "pendente", label: "Pendente" },
+                                        { value: "em_progresso", label: "Em Progresso" },
+                                        { value: "concluido", label: "Concluído" },
+                                    ]}
+                                    {...field}
+                                />
+                            )}
                         />
                     </div>
                 </div>
@@ -143,7 +166,7 @@ export function PlanejamentoModal({ open, onClose, onSave, editingItem, categori
                         </label>
                         <TagInput
                             value={categoriaValue}
-                            onChange={(v) => setValue("categoria", v)}
+                            onChange={(v) => setValue("categoria", v, { shouldValidate: true, shouldDirty: true })}
                             suggestions={categoriaSugestoes}
                             placeholder="Ex: Design, Dev"
                         />
@@ -156,10 +179,16 @@ export function PlanejamentoModal({ open, onClose, onSave, editingItem, categori
                             Data <span className="normal-case text-muted/60">(opcional)</span>
                         </label>
                         <div className="relative">
-                            <Input
-                                type="date"
-                                className="[&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-10 [&::-webkit-calendar-picker-indicator]:cursor-pointer pr-9"
-                                {...register("data")}
+                            <Controller
+                                control={control}
+                                name="data"
+                                render={({ field }) => (
+                                    <Input
+                                        type="date"
+                                        className="[&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-10 [&::-webkit-calendar-picker-indicator]:cursor-pointer pr-9"
+                                        {...field}
+                                    />
+                                )}
                             />
                             <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
                         </div>
