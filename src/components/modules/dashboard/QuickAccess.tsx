@@ -5,6 +5,17 @@ import {
   MonitorPlay, Gamepad2, RotateCcw,
   BookHeart, Kanban
 } from "lucide-react"
+import { motion } from "framer-motion"
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.04 } },
+} as const
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" as const } },
+} as const
 
 const quickAccessItems = [
   { label: "Devocionais", description: "Ver devocional", href: "/devocionais", icon: BookHeart },
@@ -35,24 +46,30 @@ export function QuickAccess({ loading }: QuickAccessProps) {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {quickAccessItems.map((item) => {
             const Icon = item.icon
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-xl border border-border bg-card-background p-3 sm:p-4 hover:border-primary/40 hover:bg-primary/5 transition-all group"
-              >
-                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-2 sm:mb-3" />
-                <p className="text-xs sm:text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                  {item.label}
-                </p>
-                <p className="text-[10px] sm:text-xs text-muted mt-0.5 truncate">{item.description}</p>
-              </Link>
+              <motion.div key={item.href} variants={itemVariants}>
+                <Link
+                  href={item.href}
+                  className="block rounded-xl border border-border bg-card-background p-3 sm:p-4 hover:border-primary/40 hover:bg-primary/5 transition-all group"
+                >
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mb-2 sm:mb-3" />
+                  <p className="text-xs sm:text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                    {item.label}
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-muted mt-0.5 truncate">{item.description}</p>
+                </Link>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       )}
     </div>
   )

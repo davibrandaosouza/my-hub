@@ -14,6 +14,7 @@ import { logout } from "@/lib/firebase/auth"
 import { Modal } from "@/components/ui/modal"
 import { useToastContext } from "@/app/(hub)/layout"
 import { MyHubLogo } from "@/components/shared/MyHubLogo"
+import { AnimatePresence, motion } from "framer-motion"
 
 // ── TIPOS ──────────────────────────────────────────
 type NavItem = {
@@ -120,12 +121,20 @@ export function Sidebar() {
                 ) : (
                     <MyHubLogo className="w-9 h-9 text-xs rounded-full shadow-none" />
                 )}
-                {!collapsed && (
-                    <div className="overflow-hidden">
-                        <p className="text-sm font-semibold text-foreground truncate">{settings.profile.displayName || "MyHub"}</p>
-                        <p className="text-xs text-muted truncate">Painel Pessoal</p>
-                    </div>
-                )}
+                <AnimatePresence>
+                    {!collapsed && (
+                        <motion.div
+                            className="overflow-hidden"
+                            initial={{ opacity: 0, x: -6 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -6 }}
+                            transition={{ duration: 0.15 }}
+                        >
+                            <p className="text-sm font-semibold text-foreground truncate">{settings.profile.displayName || "MyHub"}</p>
+                            <p className="text-xs text-muted truncate">Painel Pessoal</p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* ── BOTÃO COLAPSAR ── */}
@@ -186,7 +195,18 @@ export function Sidebar() {
                                                 title={collapsed ? item.label : undefined}
                                             >
                                                 <Icon className="w-4 h-4 shrink-0" />
-                                                {!collapsed && <span>{item.label}</span>}
+                                                <AnimatePresence>
+                                                    {!collapsed && (
+                                                        <motion.span
+                                                            initial={{ opacity: 0, x: -6 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            exit={{ opacity: 0, x: -6 }}
+                                                            transition={{ duration: 0.15 }}
+                                                        >
+                                                            {item.label}
+                                                        </motion.span>
+                                                    )}
+                                                </AnimatePresence>
                                             </Link>
                                         )
                                     })}
@@ -208,7 +228,18 @@ export function Sidebar() {
                     title={collapsed ? "Configurações" : undefined}
                 >
                     <Settings className="w-4 h-4 shrink-0" />
-                    {!collapsed && <span>Configurações</span>}
+                    <AnimatePresence>
+                        {!collapsed && (
+                            <motion.span
+                                initial={{ opacity: 0, x: -6 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -6 }}
+                                transition={{ duration: 0.15 }}
+                            >
+                                Configurações
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
                 </Link>
                 <button
                     onClick={() => setShowLogoutModal(true)}
@@ -219,7 +250,18 @@ export function Sidebar() {
                     title={collapsed ? "Sair" : undefined}
                 >
                     <LogOut className="w-4 h-4 shrink-0" />
-                    {!collapsed && <span>Sair</span>}
+                    <AnimatePresence>
+                        {!collapsed && (
+                            <motion.span
+                                initial={{ opacity: 0, x: -6 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -6 }}
+                                transition={{ duration: 0.15 }}
+                            >
+                                Sair
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
                 </button>
             </div>
             <Modal

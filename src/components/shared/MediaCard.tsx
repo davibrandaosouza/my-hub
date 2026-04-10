@@ -5,6 +5,13 @@ import { Star, Tag } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSettings } from "@/hooks/useSettings"
 import { getFormattedRating } from "@/lib/utils/ratings"
+import { motion } from "framer-motion"
+
+// Variants para stagger do container pai
+export const mediaCardVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" as const } },
+} as const
 
 export type MediaData = {
     id: string
@@ -24,9 +31,13 @@ type Props = {
 
 export function MediaCard({ data, onClick, fallbackIcon = "🎮" }: Props) {
     return (
-        <div
+        <motion.div
             onClick={() => onClick(data.id)}
             className="group relative flex flex-col h-full rounded-xl overflow-hidden border border-border bg-card-background cursor-pointer hover:border-primary/40 transition-all hover:scale-[1.02] hover:shadow-[0_8px_30px_rgb(0,0,0,0.3)]"
+            variants={mediaCardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
         >
             {/* Capa */}
             <div className="relative aspect-3/4 overflow-hidden bg-foreground/5 shrink-0">
@@ -71,7 +82,7 @@ export function MediaCard({ data, onClick, fallbackIcon = "🎮" }: Props) {
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
 

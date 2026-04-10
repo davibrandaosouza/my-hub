@@ -5,6 +5,7 @@ import { Play, Pause, RotateCcw, SkipForward, Settings as SettingsIcon } from "l
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { PomodoroSettings } from "./PomodoroSettings"
+import { AnimatePresence, motion } from "framer-motion"
 
 export function PomodoroTimer() {
     const {
@@ -88,9 +89,18 @@ export function PomodoroTimer() {
 
                 {/* Exibição do tempo */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-foreground">
-                    <span className="text-5xl sm:text-6xl font-bold tracking-tighter tabular-nums leading-none">
-                        {formatTime(timeLeft)}
-                    </span>
+                    <AnimatePresence mode="wait">
+                        <motion.span
+                            key={mode}
+                            className="text-5xl sm:text-6xl font-bold tracking-tighter tabular-nums leading-none"
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -6 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                        >
+                            {formatTime(timeLeft)}
+                        </motion.span>
+                    </AnimatePresence>
                     <span className="text-sm text-muted mt-1 font-medium">
                         {getModeLabel()}
                     </span>
@@ -101,10 +111,11 @@ export function PomodoroTimer() {
             <div className="flex flex-col items-center gap-6 w-full px-4">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-4 w-full sm:w-auto">
                     {/* Botão Principal: Iniciar/Pausar */}
-                    <button
+                    <motion.button
                         onClick={status === "running" ? pauseTimer : startTimer}
+                        whileTap={{ scale: 0.96 }}
                         className={cn(
-                            "order-1 sm:order-2 flex items-center justify-center gap-3 px-10 py-5 rounded-2xl font-semibold transition-all shadow-lg active:scale-95 w-full sm:w-auto",
+                            "order-1 sm:order-2 flex items-center justify-center gap-3 px-10 py-5 rounded-2xl font-semibold transition-colors shadow-lg w-full sm:w-auto",
                             status === "running"
                                 ? "bg-foreground/10 text-foreground hover:bg-foreground/20"
                                 : "bg-primary text-white hover:bg-primary-active shadow-primary/20"
@@ -121,7 +132,7 @@ export function PomodoroTimer() {
                                 <span>Iniciar</span>
                             </>
                         )}
-                    </button>
+                    </motion.button>
 
                     {/* Botões Secundários: Reiniciar e Pular */}
                     <div className="order-2 sm:order-1 flex items-center justify-center gap-4 w-full sm:w-auto">
@@ -153,12 +164,21 @@ export function PomodoroTimer() {
                 </button>
 
                 {/* Painel de configurações */}
-                <div className={cn(
-                    "overflow-hidden transition-all duration-300 ease-in-out w-full max-w-[340px] sm:max-w-md mx-auto",
-                    showSettings ? "max-h-[500px] opacity-100 mt-4" : "max-h-0 opacity-0"
-                )}>
-                    <PomodoroSettings onClose={() => setShowSettings(false)} />
-                </div>
+                <AnimatePresence>
+                    {showSettings && (
+                        <motion.div
+                            className="overflow-hidden w-full max-w-[340px] sm:max-w-md mx-auto"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                        >
+                            <div className="mt-4">
+                                <PomodoroSettings onClose={() => setShowSettings(false)} />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     )

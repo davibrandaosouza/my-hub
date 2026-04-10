@@ -5,6 +5,7 @@ import { useState } from "react"
 import { Folder, MoreVertical, Pencil, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Colecao } from "@/types/colecao"
+import { motion } from "framer-motion"
 
 type Props = {
     colecao: Colecao
@@ -18,7 +19,13 @@ export function ColecaoCard({ colecao, onClick, onEdit, onDelete }: Props) {
     const [confirmDelete, setConfirmDelete] = useState(false)
 
     return (
-        <div className="relative group">
+        <motion.div
+            className="relative group"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+        >
             {/* Card principal */}
             <button
                 onClick={onClick}
@@ -100,6 +107,6 @@ export function ColecaoCard({ colecao, onClick, onEdit, onDelete }: Props) {
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     )
 }

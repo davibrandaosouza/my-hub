@@ -3,6 +3,7 @@
 import { Trash2, Loader2 } from "lucide-react"
 import { useState } from "react"
 import type { Habit, HabitLog } from "@/types/habit"
+import { AnimatePresence, motion } from "framer-motion"
 
 interface Props {
     habit: Habit
@@ -24,9 +25,10 @@ export function HabitItem({ habit, log, onToggle, onDelete }: Props) {
     }
 
     return (
-        <div
+        <motion.div
+            layout
             className={`
-                flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl border transition-all duration-200 group
+                flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl border transition-colors duration-200 group
                 ${completed
                     ? "border-primary/30 bg-primary/5"
                     : "border-border bg-card-background hover:border-border/80 hover:bg-foreground/2"
@@ -78,31 +80,45 @@ export function HabitItem({ habit, log, onToggle, onDelete }: Props) {
 
             {/* Ações / Confirmação */}
             <div className="flex items-center gap-2 ml-1">
-                {showConfirm ? (
-                    <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-200">
-                        <button
-                            onClick={() => setShowConfirm(false)}
-                            className="text-[10px] font-bold text-muted hover:text-foreground uppercase tracking-wider"
+                <AnimatePresence mode="wait">
+                    {showConfirm ? (
+                        <motion.div
+                            key="confirm"
+                            className="flex items-center gap-2"
+                            initial={{ opacity: 0, x: 8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 8 }}
+                            transition={{ duration: 0.15 }}
                         >
-                            Não
-                        </button>
-                        <button
-                            onClick={() => onDelete(habit.id)}
-                            className="text-[10px] font-bold text-red-400 hover:text-red-300 uppercase tracking-wider"
+                            <button
+                                onClick={() => setShowConfirm(false)}
+                                className="text-[10px] font-bold text-muted hover:text-foreground uppercase tracking-wider"
+                            >
+                                Não
+                            </button>
+                            <button
+                                onClick={() => onDelete(habit.id)}
+                                className="text-[10px] font-bold text-red-400 hover:text-red-300 uppercase tracking-wider"
+                            >
+                                Sim, excluir
+                            </button>
+                        </motion.div>
+                    ) : (
+                        <motion.button
+                            key="delete"
+                            onClick={() => setShowConfirm(true)}
+                            className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted hover:text-red-400"
+                            aria-label="Excluir hábito"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.1 }}
                         >
-                            Sim, excluir
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        onClick={() => setShowConfirm(true)}
-                        className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted hover:text-red-400"
-                        aria-label="Excluir hábito"
-                    >
-                        <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                )}
+                            <Trash2 className="w-3.5 h-3.5" />
+                        </motion.button>
+                    )}
+                </AnimatePresence>
             </div>
-        </div>
+        </motion.div>
     )
 }

@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { CheckCircle, XCircle, AlertCircle, Info, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
 
 export type ToastType = "success" | "error" | "warning" | "info"
 
@@ -33,37 +34,26 @@ type ToastItemProps = {
 }
 
 function ToastItem({ toast, onRemove }: ToastItemProps) {
-    const [visible, setVisible] = useState(false)
     const Icon = ICONS[toast.type]
     const duration = toast.duration ?? 4000
 
     useEffect(() => {
-        // Pequeno delay para ativar a animação de entrada
-        const enter = setTimeout(() => setVisible(true), 10)
-
-        // Inicia saída antes do tempo total para animar
-        const exit = setTimeout(() => setVisible(false), duration - 300)
-
-        // Remove após a animação de saída
-        const remove = setTimeout(() => onRemove(toast.id), duration)
-
-        return () => {
-            clearTimeout(enter)
-            clearTimeout(exit)
-            clearTimeout(remove)
-        }
+        const timer = setTimeout(() => onRemove(toast.id), duration)
+        return () => clearTimeout(timer)
     }, [toast.id, duration, onRemove])
 
     return (
-        <div
+        <motion.div
+            layout
             className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg transition-all duration-300 min-w-[280px] max-w-[400px]",
+                "flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg min-w-[280px] max-w-[400px]",
                 "bg-card-background",
-                STYLES[toast.type],
-                visible
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-2"
+                STYLES[toast.type]
             )}
+            initial={{ opacity: 0, x: 24, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 24, scale: 0.97 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
         >
             <Icon className="w-4 h-4 shrink-0" />
             <p className="text-sm font-medium flex-1 text-white">{toast.message}</p>
@@ -73,7 +63,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
             >
                 <X className="w-3.5 h-3.5" />
             </button>
-        </div>
+        </motion.div>
     )
 }
 
@@ -83,13 +73,13 @@ type ToastContainerProps = {
 }
 
 export function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
-    if (toasts.length === 0) return null
-
     return (
         <div className="fixed bottom-6 right-6 z-100 flex flex-col gap-2 items-end">
-            {toasts.map((toast) => (
-                <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
-            ))}
+            <AnimatePresence mode="sync">
+                {toasts.map((toast) => (
+                    <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
+                ))}
+            </AnimatePresence>
         </div>
     )
 }

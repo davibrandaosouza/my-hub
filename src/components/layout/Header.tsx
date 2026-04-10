@@ -1,6 +1,7 @@
 "use client"
 
 import { CalendarDays, ChevronLeft } from "lucide-react"
+import { motion } from "framer-motion"
 
 type HeaderProps = {
     title: string
@@ -31,7 +32,15 @@ export function Header({ title, showBack, onBack }: HeaderProps) {
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                 )}
-                <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+                <motion.h1
+                    key={title}
+                    className="text-2xl font-bold text-foreground"
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                >
+                    {title}
+                </motion.h1>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
                 <CalendarDays className="w-4 h-4 text-muted" />
