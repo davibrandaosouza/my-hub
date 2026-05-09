@@ -6,7 +6,7 @@ import Link from "next/link"
 import {
     BookHeart, LayoutDashboard, FileText,
     Timer, Tv, Film, MonitorPlay, Gamepad2,
-    Settings, ChevronRight, ChevronDown, LogOut, RotateCcw
+    Settings, ChevronRight, ChevronDown, LogOut, RotateCcw, CalendarDays
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
@@ -45,6 +45,7 @@ const navGroups: NavGroup[] = [
     {
         title: "Produtividade",
         items: [
+            { label: "Calendário", href: "/calendario", icon: CalendarDays },
             { label: "Planejamentos", href: "/planejamentos", icon: LayoutDashboard },
             { label: "Anotações", href: "/anotacoes", icon: FileText },
             { label: "Pomodoro", href: "/pomodoro", icon: Timer },
