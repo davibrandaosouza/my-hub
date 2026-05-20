@@ -52,9 +52,22 @@ export default function PlanejamentosPage() {
     const categorias = ["todos", ...Array.from(new Set(planejamentos.map(p => p.categoria)))]
 
     // Filtra por categoria
-    const filtrados = categoriaFiltro === "todos"
+    const filtradosSemOrdem = categoriaFiltro === "todos"
         ? planejamentos
         : planejamentos.filter(p => p.categoria === categoriaFiltro)
+
+    // Ordena por data (mais próximos da data limite no topo, sem data no final)
+    const filtrados = [...filtradosSemOrdem].sort((a, b) => {
+        if (a.data && b.data) {
+            if (a.data !== b.data) {
+                return a.data.localeCompare(b.data)
+            }
+            return b.createdAt - a.createdAt
+        }
+        if (a.data) return -1
+        if (b.data) return 1
+        return b.createdAt - a.createdAt
+    })
 
     const handleSave = async (data: PlanejamentoFormData) => {
         if (!user?.uid) return

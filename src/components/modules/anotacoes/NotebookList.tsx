@@ -27,7 +27,7 @@ export function NotebookList({
     onDeleteNotebook,
 }: Props) {
     const [search, setSearch] = useState("")
-    const [openNotebooks, setOpenNotebooks] = useState<string[]>(notebooks.map(n => n.id))
+    const [openNotebooks, setOpenNotebooks] = useState<string[]>([])
     const [hoveredNote, setHoveredNote] = useState<string | null>(null)
     const [hoveredNotebook, setHoveredNotebook] = useState<string | null>(null)
 
@@ -35,6 +35,11 @@ export function NotebookList({
         setOpenNotebooks(prev =>
             prev.includes(id) ? prev.filter(n => n !== id) : [...prev, id]
         )
+    }
+
+    const handleNewNoteClick = (notebookId: string) => {
+        setOpenNotebooks(prev => prev.includes(notebookId) ? prev : [...prev, notebookId])
+        onNewNote(notebookId)
     }
 
     const filteredNotes = (notebookId: string) =>
@@ -147,7 +152,7 @@ export function NotebookList({
                                         hoveredNotebook === nb.id ? "opacity-100" : "opacity-0"
                                     )}>
                                         <button
-                                            onClick={() => onNewNote(nb.id)}
+                                            onClick={() => handleNewNoteClick(nb.id)}
                                             className="p-1 rounded hover:bg-foreground/10 text-muted hover:text-foreground transition-colors"
                                             title="Nova nota"
                                         >
@@ -168,7 +173,7 @@ export function NotebookList({
                                     <div className="ml-4 mb-1">
                                         {nbNotes.length === 0 ? (
                                             <div
-                                                onClick={() => onNewNote(nb.id)}
+                                                onClick={() => handleNewNoteClick(nb.id)}
                                                 className="group flex items-center gap-1.5 mx-2 px-2 py-2 rounded-lg cursor-pointer text-[11px] text-muted hover:text-foreground hover:bg-foreground/5 transition-colors"
                                             >
                                                 <Plus className="w-3 h-3" />
